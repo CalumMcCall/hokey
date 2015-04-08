@@ -73,7 +73,7 @@ hasTwoPair :: [Card] -> Maybe [Card]
 hasTwoPair cards = case hasPair cards of Nothing -> Nothing
                                          Just x  -> case secondPair of Nothing -> Nothing
                                                                        Just y  -> Just (x ++ y)
-                                                   where secondPair = hasPair (filter (`notElem` x) cards)
+                                                    where secondPair = hasPair (filter (`notElem` x) cards)
 
 hasTrips :: [Card] -> Maybe [Card]
 hasTrips (x:y:z:xs)
@@ -81,29 +81,40 @@ hasTrips (x:y:z:xs)
     | otherwise             = hasTrips (y:z:xs)
 hasTrips _                  = Nothing
 
-hasStraight :: [Card] -> [Card] -> Maybe [Card]
-hasStraight (x:y:ys) a
+hasStraight:: [Card] -> Maybe [Card]
+hasStraight (x:xs) 
+--if an ace exists then a wheel is possible, so append it to the end so we can
+--check for wheel straights.
+    | getRank x == Ace  = hasStraightInner (x:xs ++ ace) []
+    | otherwise         = hasStraightInner (x:xs) []
+    --the suit of ace is irrelevant
+    where ace = Card Ace (getSuit x):[]
+
+hasStraightInner :: [Card] -> [Card] -> Maybe [Card]
+hasStraightInner (x:y:ys) a
     | length a == 5                                 = Just a
-    | getNextLowerRank (getRank x) == (getRank y)   = hasStraight (y:ys) (a ++ (x:[]))
-    | otherwise                                     = hasStraight (y:ys) []
-hasStraight (y:ys) a
+    | (getNextLowerRank (getRank x)) == (getRank y) = hasStraightInner(y:ys) (a ++ (x:[]))
+    | otherwise                                     = hasStraightInner(y:ys) []
+hasStraightInner(y:ys) a
     | length a == 5     = Just a
-hasStraight _ a         = Nothing
-
-hasQuads :: [Card] -> Maybe [Card]
-hasQuads (w:x:y:z:zs)
-    | w == x && w == y && w == z    = Just (w:x:y:z:[])
-    | otherwise                     = hasQuads (x:y:z:zs)
-hasQuads _                          = Nothing
-
-hasFullHouse :: [Card] -> Maybe [Card]
-hasFullHouse cards = case hasPair cards of Nothing -> Nothing
-                                           Just x  -> case trips of Nothing -> Nothing
-                                                                    Just y  -> Just (y ++ x)
-                                                       where trips = hasTrips (filter (`notElem` x) cards)
+    | length a == 4     = Just (a ++ (y:[]))
+    | otherwise         = Nothing
+hasStraightInner[] _        = Nothing
 
 hasFlush :: [Card] -> Maybe [Card]
 hasFlush (v:w:x:y:z:zs)
     | v == w && v == x && v == y && v == z  = Just (v:w:x:y:z:[])
     | otherwise                             = hasFlush (w:x:y:z:zs)
 hasFlush _                                  = Nothing
+
+hasFullHouse :: [Card] -> Maybe [Card]
+hasFullHouse cards = case hasPair cards of Nothing -> Nothing
+                                           Just x  -> case trips of Nothing -> Nothing
+                                                                    Just y  -> Just (y ++ x)
+                                                       where trips = hasTrips (filter (`notElem` x) cards)
+hasQuads :: [Card] -> Maybe [Card]
+hasQuads (w:x:y:z:zs)
+    | w == x && w == y && w == z    = Just (w:x:y:z:[])
+    | otherwise                     = hasQuads (x:y:z:zs)
+hasQuads _                          = Nothing
+
