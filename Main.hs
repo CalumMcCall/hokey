@@ -70,10 +70,12 @@ hasPair (x:y:xs)
 hasPair _       = Nothing
 
 hasTwoPair :: [Card] -> Maybe [Card]
-hasTwoPair cards = case hasPair cards of Nothing -> Nothing
-                                         Just x  -> case secondPair of Nothing -> Nothing
-                                                                       Just y  -> Just (x ++ y)
-                                                    where secondPair = hasPair (filter (`notElem` x) cards)
+hasTwoPair cards =
+    do
+        firstPair <- hasPair cards
+        secondPair <- hasPair $ filter (`notElem` firstPair) cards
+        return firstPair ++ secondPair
+                                      
 
 hasTrips :: [Card] -> Maybe [Card]
 hasTrips (x:y:z:xs)
