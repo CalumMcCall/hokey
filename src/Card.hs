@@ -1,3 +1,5 @@
+module Card ( Card(..), Rank(..), Suit(..), hasPair, hasTwoPair, hasTrips, hasStraight, hasFlush, hasQuads) where
+
 import Data.List
 
 data Rank = Two | Three | Four | Five | Six | Seven | Eight | Nine | Ten | Jack | Queen | King | Ace deriving (Ord, Eq)
@@ -74,7 +76,7 @@ hasTwoPair cards =
     do
         firstPair <- hasPair cards
         secondPair <- hasPair $ filter (`notElem` firstPair) cards
-        return firstPair ++ secondPair
+        return (firstPair ++ secondPair)
                                       
 
 hasTrips :: [Card] -> Maybe [Card]
