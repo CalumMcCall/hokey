@@ -65,6 +65,7 @@ sortBySuit :: [Card] -> [Card]
 sortBySuit (x:xs) = sortBy compareSuits (x:xs)
 sortBySuit _      = []
 
+--all hand functions below assume sorted input
 hasPair :: [Card] -> Maybe [Card]
 hasPair (x:y:xs)
     | x == y    = Just (x:y:[])
@@ -72,8 +73,7 @@ hasPair (x:y:xs)
 hasPair _       = Nothing
 
 hasTwoPair :: [Card] -> Maybe [Card]
-hasTwoPair cards =
-    do
+hasTwoPair cards = do
         firstPair <- hasPair cards
         secondPair <- hasPair $ filter (`notElem` firstPair) cards
         return (firstPair ++ secondPair)
@@ -81,11 +81,11 @@ hasTwoPair cards =
 
 hasTrips :: [Card] -> Maybe [Card]
 hasTrips (x:y:z:xs)
-    | x == y && x == z  = Just (x:y:z:[])
+    | x == y && x == z      = Just (x:y:z:[])
     | otherwise             = hasTrips (y:z:xs)
 hasTrips _                  = Nothing
 
-hasStraight:: [Card] -> Maybe [Card]
+hasStraight :: [Card] -> Maybe [Card]
 hasStraight (x:xs) 
 --if an ace exists then a wheel is possible, so append it to the end so we can
 --check for wheel straights.
