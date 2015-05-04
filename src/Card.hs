@@ -1,4 +1,4 @@
-module Card ( Card(..), Rank(..), Suit(..), hasPair, hasTwoPair, hasTrips, hasStraight, hasFlush, hasQuads) where
+module Card ( Card(..), Rank(..), Suit(..), hasPair, hasTwoPair, hasTrips, hasStraight, hasFlush, hasQuads, hasStraightFlush) where
 
 import Data.List
 
@@ -85,7 +85,8 @@ hasTrips (x:y:z:xs)
     | otherwise             = hasTrips (y:z:xs)
 hasTrips _                  = Nothing
 
-hasStraight :: [Card] -> Maybe [Card]
+hasStraight :: [Card] -> [Card]
+hasStraight []     = []
 hasStraight (x:xs) 
 --if an ace exists then a wheel is possible, so append it to the end so we can
 --check for wheel straights.
@@ -94,16 +95,16 @@ hasStraight (x:xs)
     --the suit of ace is irrelevant
     where ace = Card Ace (getSuit x):[]
 
-hasStraightInner :: [Card] -> [Card] -> Maybe [Card]
+hasStraightInner :: [Card] -> [Card] -> [Card]
 hasStraightInner (x:y:ys) a
-    | length a == 5                                 = Just a
+    | length a == 5                                 = a
     | (getNextLowerRank (getRank x)) == (getRank y) = hasStraightInner(y:ys) (a ++ (x:[]))
     | otherwise                                     = hasStraightInner(y:ys) []
 hasStraightInner(y:ys) a
-    | length a == 5     = Just a
-    | length a == 4     = Just (a ++ (y:[]))
-    | otherwise         = Nothing
-hasStraightInner[] _        = Nothing
+    | length a == 5     = a
+    | length a == 4     = (a ++ (y:[]))
+    | otherwise         = []
+hasStraightInner[] _        = []
 
 hasFlush :: [Card] -> Maybe [Card]
 hasFlush (v:w:x:y:z:zs)
@@ -121,4 +122,27 @@ hasQuads (w:x:y:z:zs)
     | w == x && w == y && w == z    = Just (w:x:y:z:[])
     | otherwise                     = hasQuads (x:y:z:zs)
 hasQuads _                          = Nothing
+
+separateBySuit :: [Card] -> [[Card]]
+separateBySuit [] = []
+separateBySuit c = [spades, clubs, diamonds, hearts]
+    where spades    = getCardsOfSuit Spades c
+          clubs     = getCardsOfSuit Clubs c
+          diamonds  = getCardsOfSuit Diamonds c
+          hearts    = getCardsOfSuit Hearts c
+
+getCardsOfSuit :: Suit -> [Card] -> [Card]
+getCardsOfSuit _ [] = []
+getCardsOfSuit s c  =  getCardsOfSuitInner s [] c 
+
+getCardsOfSuitInner :: Suit -> [Card] -> [Card] -> [Card]
+getCardsOfSuitInner _ l []     = l
+getCardsOfSuitInner s l (x:xs)
+    | getSuit x == s    = l ++ (x:[]) ++ rest
+    | otherwise         = l ++ rest
+             where rest = getCardsOfSuitInner s l xs
+
+hasStraightFlush :: [Card] -> [Card]
+hasStraightFlush [] = []
+hasStraightFlush c  = take 5 $ concat $ map hasStraight (separateBySuit c) 
 

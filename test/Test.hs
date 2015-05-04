@@ -18,7 +18,11 @@ testTripsWithHighCards = TestCase $ assertEqual "Should get Nothing" Nothing (ha
 
 testTripsWithOnePair = TestCase $ assertEqual "Should get Nothing" Nothing (hasTwoPair [Card Ten Spades, Card Ten Clubs, Card Queen Diamonds, Card Ace Hearts, Card King Diamonds])
 
-testTripsNormal = TestCase $ assertEqual "Should get Nothing" Nothing (hasTwoPair [Card Ten Spades, Card Ten Clubs, Card Ten Diamonds, Card Ace Hearts, Card King Diamonds])
+testTripsNothing = TestCase $ assertEqual "Should get Nothing" Nothing (hasTwoPair [Card Ten Spades, Card Ten Clubs, Card Ten Diamonds, Card Ace Hearts, Card King Diamonds])
+
+testSFNothing = TestCase $ assertEqual "Should get Nothing" [] (hasStraightFlush [Card Ten Spades, Card Ten Clubs, Card Queen Diamonds, Card Jack Spades, Card Three Clubs])
+
+testSFNormal = TestCase $ assertEqual "Should get 6-high straight flush" [Card Six Spades, Card Five Spades, Card Four Spades, Card Three Spades, Card Two Spades] (hasStraightFlush [Card Six Spades, Card Five Spades, Card Four Spades, Card Three Spades, Card Two Spades])
 
 testCases :: [(String, Test)]
 testCases = [("Test hasPair with high cards", testHasPairWithHighCards),
@@ -28,7 +32,9 @@ testCases = [("Test hasPair with high cards", testHasPairWithHighCards),
             ("Test hasTwoPair with normal input", testTwoPairNormal),
             ("Test hasTrips with high cards", testTripsWithHighCards),
             ("Test hasTrips with one pair", testTripsWithOnePair),
-            ("Test hasTrips with normal input", testTripsNormal)
+            ("Test hasTrips with normal input", testTripsNothing),
+            ("Test hasStraightFlush with empty list", testSFNothing),
+            ("Test hasStraightFlush with normal input", testSFNormal)
             ]
 
 tests :: IO [TS.Test]
