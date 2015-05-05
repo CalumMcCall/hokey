@@ -90,21 +90,24 @@ hasStraight []     = []
 hasStraight (x:xs) 
 --if an ace exists then a wheel is possible, so append it to the end so we can
 --check for wheel straights.
-    | getRank x == Ace  = hasStraightInner (x:xs ++ ace) []
-    | otherwise         = hasStraightInner (x:xs) []
+    | getRank x == Ace  = hasStraightInner (x:xs ++ ace)
+    | otherwise         = hasStraightInner (x:xs)
     --the suit of ace is irrelevant
     where ace = Card Ace (getSuit x):[]
 
-hasStraightInner :: [Card] -> [Card] -> [Card]
-hasStraightInner (x:y:ys) a
-    | length a == 5                                 = a
-    | (getNextLowerRank (getRank x)) == (getRank y) = hasStraightInner(y:ys) (a ++ (x:[]))
-    | otherwise                                     = hasStraightInner(y:ys) []
-hasStraightInner(y:ys) a
-    | length a == 5     = a
-    | length a == 4     = (a ++ (y:[]))
-    | otherwise         = []
-hasStraightInner[] _        = []
+hasStraightInner :: [Card] -> [Card]
+hasStraightInner (v:w:x:y:z:zs)
+    | getNextLowerRank vr == wr &&
+      getNextLowerRank wr == xr &&
+      getNextLowerRank xr == yr &&
+      getNextLowerRank yr == zr = (v:w:x:y:z:[])
+    | otherwise                 = hasStraightInner (w:x:y:z:zs)
+        where vr = getRank v
+              wr = getRank w
+              xr = getRank x
+              yr = getRank y
+              zr = getRank z
+hasStraightInner _ = []
 
 hasFlush :: [Card] -> [Card]
 hasFlush (v:w:x:y:z:zs)
