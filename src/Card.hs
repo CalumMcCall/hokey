@@ -66,24 +66,24 @@ sortBySuit (x:xs) = sortBy compareSuits (x:xs)
 sortBySuit _      = []
 
 --all hand functions below assume sorted input
-hasPair :: [Card] -> Maybe [Card]
+hasPair :: [Card] -> [Card]
 hasPair (x:y:xs)
-    | x == y    = Just (x:y:[])
+    | x == y    = (x:y:[])
     | otherwise = hasPair (y:xs)
-hasPair _       = Nothing
+hasPair _       = []
 
-hasTwoPair :: [Card] -> Maybe [Card]
-hasTwoPair cards = do
-        firstPair <- hasPair cards
-        secondPair <- hasPair $ filter (`notElem` firstPair) cards
-        return (firstPair ++ secondPair)
-                                      
+hasTwoPair :: [Card] -> [Card]
+hasTwoPair cards
+    | firstPair /= [] && secondPair /= []   = firstPair ++ secondPair
+    | otherwise                             = []
+        where firstPair  = hasPair cards
+              secondPair = hasPair $ filter (`notElem` firstPair) cards 
 
-hasTrips :: [Card] -> Maybe [Card]
+hasTrips :: [Card] -> [Card]
 hasTrips (x:y:z:xs)
-    | x == y && x == z      = Just (x:y:z:[])
+    | x == y && x == z      = (x:y:z:[])
     | otherwise             = hasTrips (y:z:xs)
-hasTrips _                  = Nothing
+hasTrips _                  = []
 
 hasStraight :: [Card] -> [Card]
 hasStraight []     = []
@@ -106,22 +106,25 @@ hasStraightInner(y:ys) a
     | otherwise         = []
 hasStraightInner[] _        = []
 
-hasFlush :: [Card] -> Maybe [Card]
+hasFlush :: [Card] -> [Card]
 hasFlush (v:w:x:y:z:zs)
-    | v == w && v == x && v == y && v == z  = Just (v:w:x:y:z:[])
+    | v == w && v == x && v == y && v == z  = (v:w:x:y:z:[])
     | otherwise                             = hasFlush (w:x:y:z:zs)
-hasFlush _                                  = Nothing
+hasFlush _                                  = []
 
-hasFullHouse :: [Card] -> Maybe [Card]
-hasFullHouse cards = case hasPair cards of Nothing -> Nothing
-                                           Just x  -> case trips of Nothing -> Nothing
-                                                                    Just y  -> Just (y ++ x)
-                                                       where trips = hasTrips (filter (`notElem` x) cards)
-hasQuads :: [Card] -> Maybe [Card]
+hasFullHouse :: [Card] -> [Card]
+hasFullHouse []    = []
+hasFullHouse cards
+    | pair /= [] && trips /= [] = trips ++ pair
+    | otherwise                 = []
+        where pair  = hasPair cards
+              trips = hasTrips (filter (`notElem` pair) cards)
+
+hasQuads :: [Card] -> [Card]
 hasQuads (w:x:y:z:zs)
-    | w == x && w == y && w == z    = Just (w:x:y:z:[])
+    | w == x && w == y && w == z    = (w:x:y:z:[])
     | otherwise                     = hasQuads (x:y:z:zs)
-hasQuads _                          = Nothing
+hasQuads _                          = []
 
 separateBySuit :: [Card] -> [[Card]]
 separateBySuit [] = []
