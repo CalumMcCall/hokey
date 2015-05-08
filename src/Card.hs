@@ -111,8 +111,13 @@ hasStraightInner _ = []
 
 hasFlush :: [Card] -> [Card]
 hasFlush (v:w:x:y:z:zs)
-    | v == w && v == x && v == y && v == z  = (v:w:x:y:z:[])
+    | vx == wx && vx == xx && vx == yx && vx == zx  = (v:w:x:y:z:[])
     | otherwise                             = hasFlush (w:x:y:z:zs)
+        where vx = getSuit v
+              wx = getSuit w
+              xx = getSuit x
+              yx = getSuit y
+              zx = getSuit z
 hasFlush _                                  = []
 
 hasFullHouse :: [Card] -> [Card]
