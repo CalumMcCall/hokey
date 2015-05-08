@@ -1,4 +1,4 @@
-module Card ( Card(..), Rank(..), Suit(..), hasPair, hasTwoPair, hasTrips, hasStraight, hasFlush, hasQuads, hasStraightFlush) where
+module Card ( Card(..), Rank(..), Suit(..), hasPair, hasTwoPair, hasTrips, hasStraight, hasFlush, hasFullHouse, hasQuads, hasStraightFlush) where
 
 import Data.List
 
