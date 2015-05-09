@@ -3,7 +3,7 @@ module Card ( Card(..), Rank(..), Suit(..), hasPair, hasTwoPair, hasTrips, hasSt
 import Data.List
 
 data Rank = Two | Three | Four | Five | Six | Seven | Eight | Nine | Ten | Jack | Queen | King | Ace deriving (Ord, Eq)
-data Suit = Spades | Diamonds | Clubs | Hearts deriving (Ord, Eq)
+data Suit = Diamonds | Clubs | Hearts | Spades deriving (Ord, Eq)
 data Card = Card Rank Suit 
 
 instance Show Rank where
