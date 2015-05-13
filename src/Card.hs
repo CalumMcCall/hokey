@@ -65,28 +65,44 @@ sortBySuit :: [Card] -> [Card]
 sortBySuit (x:xs) = sortBy compareSuits (x:xs)
 sortBySuit _      = []
 
---all hand functions below assume sorted input
+--all hand functions below assume reversed, sorted input
 hasPair :: [Card] -> [Card]
-hasPair (x:y:xs)
+hasPair (v:w:x:y:z:zs)
+    | pair /= []    = pair ++ (take 3 $ filter (`notElem` pair) (v:w:x:y:z:zs))
+    | otherwise     = []
+        where pair = hasPairInner (v:w:x:y:z:zs)
+hasPair _ = []
+
+hasPairInner :: [Card] -> [Card]
+hasPairInner (x:y:xs)
     | x == y    = (x:y:[])
-    | otherwise = hasPair (y:xs)
-hasPair _       = []
+    | otherwise = hasPairInner (y:xs)
+hasPairInner _       = []
 
 hasTwoPair :: [Card] -> [Card]
-hasTwoPair cards
-    | firstPair /= [] && secondPair /= []   = firstPair ++ secondPair
+hasTwoPair (v:w:x:y:z:zs)
+    | firstPair /= [] && secondPair /= []   = firstPair ++ secondPair ++ kicker
     | otherwise                             = []
-        where firstPair  = hasPair cards
-              secondPair = hasPair $ filter (`notElem` firstPair) cards 
+        where firstPair  = hasPairInner (v:w:x:y:z:zs)
+              secondPair = hasPairInner $ remainder
+              remainder  = filter (`notElem` firstPair) (v:w:x:y:z:zs)
+              kicker     = take 1 $ filter (`notElem` secondPair) remainder
+hasTwoPair _ = []
 
 hasTrips :: [Card] -> [Card]
-hasTrips (x:y:z:xs)
+hasTrips (v:w:x:y:z:zs)
+    | trips /= []       = trips ++ kickers
+        where trips     = hasTripsInner (v:w:x:y:z:zs)
+              kickers   = take 2 $ filter (`notElem` trips) (v:w:x:y:z:zs)
+hasTrips _ = []
+
+hasTripsInner :: [Card] -> [Card]
+hasTripsInner (x:y:z:xs)
     | x == y && x == z      = (x:y:z:[])
-    | otherwise             = hasTrips (y:z:xs)
-hasTrips _                  = []
+    | otherwise             = hasTripsInner (y:z:xs)
+hasTripsInner _             = []
 
 hasStraight :: [Card] -> [Card]
-hasStraight []     = []
 hasStraight (x:xs) 
 --if an ace exists then a wheel is possible, so append it to the end so we can
 --check for wheel straights.
@@ -94,6 +110,7 @@ hasStraight (x:xs)
     | otherwise         = hasStraightInner (x:xs)
     --the suit of ace is irrelevant
     where ace = Card Ace (getSuit x):[]
+hasStraight _ = []
 
 hasStraightInner :: [Card] -> [Card]
 hasStraightInner (v:w:x:y:z:zs)
@@ -125,8 +142,8 @@ hasFullHouse []    = []
 hasFullHouse cards
     | pair /= [] && trips /= [] = trips ++ pair
     | otherwise                 = []
-        where pair  = hasPair cards
-              trips = hasTrips (filter (`notElem` pair) cards)
+        where pair  = hasPairInner cards
+              trips = hasTripsInner (filter (`notElem` pair) cards)
 
 hasQuads :: [Card] -> [Card]
 hasQuads (w:x:y:z:zs)

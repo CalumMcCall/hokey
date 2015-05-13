@@ -7,13 +7,13 @@ import Card
 
 --Test hasPair
 
-testHasPairNormal = TestCase $ assertEqual "Should get list of cards containing a pair" (reverse $ sort [(Card Two Spades), (Card Two Clubs)]) (hasPair $ reverse $ sort [(Card Two Spades), (Card Two Clubs), (Card Three Spades)])
+testHasPairNormal = TestCase $ assertEqual "Should get list of cards containing a pair" [Card Two Spades, Card Two Clubs, Card Ten Spades, Card Eight Diamonds, Card Three Clubs] (hasPair $ reverse $ sort [Card Two Spades, Card Two Clubs, Card Three Spades, Card Ten Diamonds, Card Eight Clubs])
 
 testHasPairWithHighCards = TestCase $ assertEqual "Should get empty list" [] (hasPair $ reverse $ sort [(Card Two Spades), (Card Four Clubs), (Card Three Spades)])
 
 --Test hasTwoPair
 
-testTwoPairNormal = TestCase $ assertEqual "Should get list of cards containing two pair" [Card Ace Diamonds, Card Ace Hearts, Card Three Spades, Card Three Clubs] (hasTwoPair $ reverse $ sort [Card Three Spades, Card Three Clubs, Card Ace Diamonds, Card Ace Hearts, Card King Diamonds])
+testTwoPairNormal = TestCase $ assertEqual "Should get list of cards containing two pair" [Card Ace Diamonds, Card Ace Hearts, Card Three Spades, Card Three Clubs, Card King Diamonds] (hasTwoPair $ reverse $ sort [Card Three Spades, Card Three Clubs, Card King Diamonds, Card Ace Hearts, Card Ace Diamonds])
 
 testTwoPairWithOnePair = TestCase $ assertEqual "Should get empty list" [] (hasTwoPair $ reverse $ sort [Card Seven Spades, Card Seven Clubs, Card Queen Diamonds, Card Ace Hearts, Card King Diamonds])
 
@@ -21,7 +21,7 @@ testTwoPairWithHighCards = TestCase $ assertEqual "Should get empty list" [] (ha
 
 --Test hasTrips
 
-testTripsNormal = TestCase $ assertEqual "Should get list containing trips" [Card Ten Spades, Card Ten Clubs, Card Ten Diamonds] (hasTrips $ reverse $ sort [Card Ten Spades, Card Ten Clubs, Card Ten Diamonds, Card Ace Hearts, Card King Diamonds])
+testTripsNormal = TestCase $ assertEqual "Should get list containing trips" [Card Ten Spades, Card Ten Clubs, Card Ten Diamonds, Card Ace Hearts, Card King Diamonds] (hasTrips $ reverse $ sort [Card Ten Spades, Card Ten Clubs, Card Ten Diamonds, Card King Hearts, Card Ace Diamonds])
 
 testTripsWithOnePair = TestCase $ assertEqual "Should get empty list" [] (hasTrips $ reverse $ sort [Card Ten Spades, Card Ten Clubs, Card Queen Diamonds, Card Ace Hearts, Card King Diamonds])
 
