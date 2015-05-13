@@ -15,7 +15,7 @@ instance Show Rank where
     show Seven = "7"
     show Eight = "8"
     show Nine = "9"
-    show Ten = "10"
+    show Ten = "T"
     show Jack = "J"
     show Queen = "Q"
     show King = "K"
@@ -64,6 +64,25 @@ compareSuits a b = (getSuit a) `compare ` (getSuit b)
 sortBySuit :: [Card] -> [Card]
 sortBySuit (x:xs) = sortBy compareSuits (x:xs)
 sortBySuit _      = []
+
+separateBySuit :: [Card] -> [[Card]]
+separateBySuit [] = []
+separateBySuit c = [spades, clubs, diamonds, hearts]
+    where spades    = getCardsOfSuit Spades c
+          clubs     = getCardsOfSuit Clubs c
+          diamonds  = getCardsOfSuit Diamonds c
+          hearts    = getCardsOfSuit Hearts c
+
+getCardsOfSuit :: Suit -> [Card] -> [Card]
+getCardsOfSuit _ [] = []
+getCardsOfSuit s c  =  getCardsOfSuitInner s [] c 
+
+getCardsOfSuitInner :: Suit -> [Card] -> [Card] -> [Card]
+getCardsOfSuitInner _ l []     = l
+getCardsOfSuitInner s l (x:xs)
+    | getSuit x == s    = l ++ (x:[]) ++ rest
+    | otherwise         = l ++ rest
+             where rest = getCardsOfSuitInner s l xs
 
 --all hand functions below assume reversed, sorted input
 hasPair :: [Card] -> [Card]
@@ -150,25 +169,6 @@ hasQuads (w:x:y:z:zs)
     | w == x && w == y && w == z    = (w:x:y:z:[])
     | otherwise                     = hasQuads (x:y:z:zs)
 hasQuads _                          = []
-
-separateBySuit :: [Card] -> [[Card]]
-separateBySuit [] = []
-separateBySuit c = [spades, clubs, diamonds, hearts]
-    where spades    = getCardsOfSuit Spades c
-          clubs     = getCardsOfSuit Clubs c
-          diamonds  = getCardsOfSuit Diamonds c
-          hearts    = getCardsOfSuit Hearts c
-
-getCardsOfSuit :: Suit -> [Card] -> [Card]
-getCardsOfSuit _ [] = []
-getCardsOfSuit s c  =  getCardsOfSuitInner s [] c 
-
-getCardsOfSuitInner :: Suit -> [Card] -> [Card] -> [Card]
-getCardsOfSuitInner _ l []     = l
-getCardsOfSuitInner s l (x:xs)
-    | getSuit x == s    = l ++ (x:[]) ++ rest
-    | otherwise         = l ++ rest
-             where rest = getCardsOfSuitInner s l xs
 
 hasStraightFlush :: [Card] -> [Card]
 hasStraightFlush [] = []
