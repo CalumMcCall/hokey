@@ -3,6 +3,7 @@ import Data.List
 import Test.HUnit
 import qualified Distribution.TestSuite as TS
 import qualified Distribution.TestSuite.HUnit as H
+import Hand
 import Card
 
 --Test hasPair
