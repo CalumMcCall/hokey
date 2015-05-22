@@ -2,12 +2,12 @@ module Card (Card(..), Rank(..), Suit(..), getNextLowerRank, getSuit, getRank, c
 
 import Data.List
 
-data Rank = Two | Three | Four | Five | Six | Seven | Eight | Nine | Ten | Jack | Queen | King | Ace deriving (Ord, Eq)
+data Rank = Deuce | Three | Four | Five | Six | Seven | Eight | Nine | Ten | Jack | Queen | King | Ace deriving (Ord, Eq)
 data Suit = Diamonds | Clubs | Hearts | Spades deriving (Ord, Eq)
 data Card = Card Rank Suit 
 
 instance Show Rank where
-    show Two = "2"
+    show Deuce = "2"
     show Three = "3"
     show Four = "4"
     show Five = "5"
@@ -49,8 +49,8 @@ getNextLowerRank a
     | a == Six      = Five
     | a == Five     = Four
     | a == Four     = Three
-    | a == Three    = Two
-    | a == Two      = Ace
+    | a == Three    = Deuce
+    | a == Deuce      = Ace
 
 getSuit :: Card -> Suit
 getSuit (Card _ s) = s

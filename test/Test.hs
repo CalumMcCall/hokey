@@ -8,9 +8,9 @@ import Card
 
 --Test hasPair
 
-testHasPairNormal = TestCase $ assertEqual "Should get list of cards containing a pair" [Card Two Spades, Card Two Clubs, Card Ten Spades, Card Eight Diamonds, Card Three Clubs] (hasPair $ reverse $ sort [Card Two Spades, Card Two Clubs, Card Three Spades, Card Ten Diamonds, Card Eight Clubs])
+testHasPairNormal = TestCase $ assertEqual "Should get list of cards containing a pair" [Card Deuce Spades, Card Deuce Clubs, Card Ten Spades, Card Eight Diamonds, Card Three Clubs] (hasPair $ reverse $ sort [Card Deuce Spades, Card Deuce Clubs, Card Three Spades, Card Ten Diamonds, Card Eight Clubs])
 
-testHasPairWithHighCards = TestCase $ assertEqual "Should get empty list" [] (hasPair $ reverse $ sort [(Card Two Spades), (Card Four Clubs), (Card Three Spades)])
+testHasPairWithHighCards = TestCase $ assertEqual "Should get empty list" [] (hasPair $ reverse $ sort [(Card Deuce Spades), (Card Four Clubs), (Card Three Spades)])
 
 --Test hasTwoPair
 
@@ -36,9 +36,9 @@ testStraightAlmost = TestCase $ assertEqual "Should get empty list" [] (hasStrai
 
 testStraightAlmostBroadway = TestCase $ assertEqual "Should get empty list" [] (hasStraight $ reverse $ sort [Card Ace Spades, Card King Diamonds, Card Queen Spades, Card Jack Spades, Card Nine Spades])
 
-testStraightNormal = TestCase $ assertEqual "Should get 6-high straight" [Card Six Spades, Card Five Spades, Card Four Clubs, Card Three Spades, Card Two Spades] (hasStraight $ reverse $ sort [Card Six Spades, Card Five Spades, Card Four Clubs, Card Three Spades, Card Two Spades])
+testStraightNormal = TestCase $ assertEqual "Should get 6-high straight" [Card Six Spades, Card Five Spades, Card Four Clubs, Card Three Spades, Card Deuce Spades] (hasStraight $ reverse $ sort [Card Six Spades, Card Five Spades, Card Four Clubs, Card Three Spades, Card Deuce Spades])
 
-testStraightWheel = TestCase $ assertEqual "Should get 5-high straight" [Card Five Clubs, Card Four Hearts, Card Three Spades, Card Two Spades, Card Ace Spades] (hasStraight $ reverse $ sort [Card Ace Spades, Card Five Clubs, Card Four Hearts, Card Three Spades, Card Two Spades])
+testStraightWheel = TestCase $ assertEqual "Should get 5-high straight" [Card Five Clubs, Card Four Hearts, Card Three Spades, Card Deuce Spades, Card Ace Spades] (hasStraight $ reverse $ sort [Card Ace Spades, Card Five Clubs, Card Four Hearts, Card Three Spades, Card Deuce Spades])
 
 testStraightBroadway = TestCase $ assertEqual "Should get Broadway Straight" [Card Ace Spades, Card King Diamonds, Card Queen Spades, Card Jack Clubs, Card Ten Spades] (hasStraight $ reverse $ sort [Card Ace Spades, Card King Diamonds, Card Queen Spades, Card Jack Clubs, Card Ten Spades])
 
@@ -74,9 +74,9 @@ testQuadsWithHighCards = TestCase $ assertEqual "Should get empty list" [] (hasQ
 
 --Test hasStraightFlush
 
-testSFNormal = TestCase $ assertEqual "Should get 6-high straight flush" [Card Six Spades, Card Five Spades, Card Four Spades, Card Three Spades, Card Two Spades] (hasStraightFlush $ reverse $ sort [Card Six Spades, Card Five Spades, Card Four Spades, Card Three Spades, Card Two Spades])
+testSFNormal = TestCase $ assertEqual "Should get 6-high straight flush" [Card Six Spades, Card Five Spades, Card Four Spades, Card Three Spades, Card Deuce Spades] (hasStraightFlush $ reverse $ sort [Card Six Spades, Card Five Spades, Card Four Spades, Card Three Spades, Card Deuce Spades])
 
-testSFSteelWheel = TestCase $ assertEqual "Should get 5-high straight flush" [Card Five Spades, Card Four Spades, Card Three Spades, Card Two Spades, Card Ace Spades] (hasStraightFlush $ reverse $ sort [Card Ace Spades, Card Five Spades, Card Four Spades, Card Three Spades, Card Two Spades])
+testSFSteelWheel = TestCase $ assertEqual "Should get 5-high straight flush" [Card Five Spades, Card Four Spades, Card Three Spades, Card Deuce Spades, Card Ace Spades] (hasStraightFlush $ reverse $ sort [Card Ace Spades, Card Five Spades, Card Four Spades, Card Three Spades, Card Deuce Spades])
 
 testSFRoyalFlush = TestCase $ assertEqual "Should get Royal flush" [Card Ace Spades, Card King Spades, Card Queen Spades, Card Jack Spades, Card Ten Spades] (hasStraightFlush $ reverse $ sort [Card Ace Spades, Card King Spades, Card Queen Spades, Card Jack Spades, Card Ten Spades])
 
@@ -87,11 +87,11 @@ testSFNothing = TestCase $ assertEqual "Should get empty list" [] (hasStraightFl
 
 --Test getBestHand
 
-testStraightLTRoyal = TestCase $ assertEqual "Straight is less than a royal flush" True ((getBestHand $ reverse $ sort [Card Six Clubs, Card Five Spades, Card Four Diamonds, Card Three Clubs, Card Two Spades]) < (getBestHand $ reverse $ sort [Card Ace Spades, Card King Spades, Card Queen Spades, Card Jack Spades, Card Ten Spades]))
+testStraightLTRoyal = TestCase $ assertEqual "Straight is less than a royal flush" True ((getBestHand $ reverse $ sort [Card Six Clubs, Card Five Spades, Card Four Diamonds, Card Three Clubs, Card Deuce Spades]) < (getBestHand $ reverse $ sort [Card Ace Spades, Card King Spades, Card Queen Spades, Card Jack Spades, Card Ten Spades]))
 
-testHighCardsLTTwoPair = TestCase $ assertEqual "High cards are less than two pair" True ((getBestHand $ reverse $ sort [Card Six Clubs, Card Ten Spades, Card Two Diamonds, Card King Clubs, Card Two Spades]) < (getBestHand $ reverse $ sort [Card Ace Spades, Card Ace Clubs, Card Eight Diamonds, Card Two Clubs, Card Eight Spades]))
+testHighCardsLTTwoPair = TestCase $ assertEqual "High cards are less than two pair" True ((getBestHand $ reverse $ sort [Card Six Clubs, Card Ten Spades, Card Deuce Diamonds, Card King Clubs, Card Deuce Spades]) < (getBestHand $ reverse $ sort [Card Ace Spades, Card Ace Clubs, Card Eight Diamonds, Card Deuce Clubs, Card Eight Spades]))
 
-testStraightGTWheel = TestCase $ assertEqual "6-high straight is greater than a wheel" True ((getBestHand $ reverse $ sort [Card Six Clubs, Card Five Spades, Card Four Diamonds, Card Three Clubs, Card Two Spades]) > (getBestHand $ reverse $ sort [Card Two Spades, Card Four Clubs, Card Five Diamonds, Card Three Hearts, Card Ace Spades]))
+testStraightGTWheel = TestCase $ assertEqual "6-high straight is greater than a wheel" True ((getBestHand $ reverse $ sort [Card Six Clubs, Card Five Spades, Card Four Diamonds, Card Three Clubs, Card Deuce Spades]) > (getBestHand $ reverse $ sort [Card Deuce Spades, Card Four Clubs, Card Five Diamonds, Card Three Hearts, Card Ace Spades]))
 
 testCases :: [(String, Test)]
 testCases = [("Test hasPair with high cards", testHasPairWithHighCards),
