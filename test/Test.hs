@@ -84,6 +84,15 @@ testSFAlmost = TestCase $ assertEqual "Should get empty list" [] (hasStraightFlu
 
 testSFNothing = TestCase $ assertEqual "Should get empty list" [] (hasStraightFlush $ reverse $ sort [Card Ten Spades, Card Ten Clubs, Card Queen Diamonds, Card Jack Spades, Card Three Clubs])
 
+
+--Test getBestHand
+
+testStraightLTRoyal = TestCase $ assertEqual "Straight is less than a royal flush" True ((getBestHand $ reverse $ sort [Card Six Clubs, Card Five Spades, Card Four Diamonds, Card Three Clubs, Card Two Spades]) < (getBestHand $ reverse $ sort [Card Ace Spades, Card King Spades, Card Queen Spades, Card Jack Spades, Card Ten Spades]))
+
+testHighCardsLTTwoPair = TestCase $ assertEqual "High cards are less than two pair" True ((getBestHand $ reverse $ sort [Card Six Clubs, Card Ten Spades, Card Two Diamonds, Card King Clubs, Card Two Spades]) < (getBestHand $ reverse $ sort [Card Ace Spades, Card Ace Clubs, Card Eight Diamonds, Card Two Clubs, Card Eight Spades]))
+
+testStraightGTWheel = TestCase $ assertEqual "6-high straight is greater than a wheel" True ((getBestHand $ reverse $ sort [Card Six Clubs, Card Five Spades, Card Four Diamonds, Card Three Clubs, Card Two Spades]) > (getBestHand $ reverse $ sort [Card Two Spades, Card Four Clubs, Card Five Diamonds, Card Three Hearts, Card Ace Spades]))
+
 testCases :: [(String, Test)]
 testCases = [("Test hasPair with high cards", testHasPairWithHighCards),
             ("Test hasPair with normal input", testHasPairNormal),
@@ -114,7 +123,10 @@ testCases = [("Test hasPair with high cards", testHasPairWithHighCards),
             ("Test hasStraightFlush with 4-card straight", testSFAlmost),
             ("Test hasStraightFlush with normal input", testSFNormal),
             ("Test hasStraightFlush with 5-high straight flush", testSFSteelWheel),
-            ("Test hasStraightFlush with royal flush", testSFRoyalFlush)
+            ("Test hasStraightFlush with royal flush", testSFRoyalFlush),
+            ("Test Hand Ord function with royal flush and straight", testStraightLTRoyal),
+            ("Test Hand Ord function with high cards and straight", testHighCardsLTTwoPair),
+            ("Test Hand Ord function with two straights", testStraightGTWheel)
             ]
 
 tests :: IO [TS.Test]

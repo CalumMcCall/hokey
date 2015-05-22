@@ -1,4 +1,4 @@
-module Hand(hasPair, hasTwoPair, hasTrips, hasStraight, hasFlush, hasFullHouse, hasQuads, hasStraightFlush) where
+module Hand(hasPair, hasTwoPair, hasTrips, hasStraight, hasFlush, hasFullHouse, hasQuads, hasStraightFlush, getBestHand, Hand(..), HandType(..)) where
 
 import Data.List
 import Card
