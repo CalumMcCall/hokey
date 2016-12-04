@@ -1,4 +1,4 @@
-module Card (Card(..), Rank(..), Suit(..), getNextLowerRank, getSuit, getRank, compareSuits, sortBySuit, separateBySuit, getCardsOfSuit) where
+module Hokey.Card (Card(..), Rank(..), Suit(..), getNextLowerRank, getSuit, getRank, compareSuits, sortBySuit, separateBySuit, getCardsOfSuit) where
 
 import Data.List
 
@@ -31,26 +31,25 @@ instance Show Card where
     show (Card r s) = (show r) ++ (show s)
 
 instance Ord Card where
-    (Card r1 s1) `compare` (Card r2 s2) = r1 `compare` r2
+    (Card r1 _) `compare` (Card r2 _) = r1 `compare` r2
 
 instance Eq Card where
-    (Card r1 s1) == (Card r2 s2) = r1 == r2
+    (Card r1 _) == (Card r2 _) = r1 == r2
 
 getNextLowerRank :: Rank -> Rank
-getNextLowerRank a
-    | a == Ace      = King
-    | a == King     = Queen
-    | a == Queen    = Jack
-    | a == Jack     = Ten
-    | a == Ten      = Nine
-    | a == Nine     = Eight
-    | a == Eight    = Seven
-    | a == Seven    = Six
-    | a == Six      = Five
-    | a == Five     = Four
-    | a == Four     = Three
-    | a == Three    = Deuce
-    | a == Deuce      = Ace
+getNextLowerRank Ace   = King
+getNextLowerRank King  = Queen
+getNextLowerRank Queen = Jack
+getNextLowerRank Jack  = Ten
+getNextLowerRank Ten   = Nine
+getNextLowerRank Nine  = Eight
+getNextLowerRank Eight = Seven
+getNextLowerRank Seven = Six
+getNextLowerRank Six   = Five
+getNextLowerRank Five  = Four
+getNextLowerRank Four  = Three
+getNextLowerRank Three = Deuce
+getNextLowerRank Deuce = Ace
 
 getSuit :: Card -> Suit
 getSuit (Card _ s) = s

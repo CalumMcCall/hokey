@@ -1,11 +1,10 @@
-module Test where
 import Data.List
-import Test.HUnit
-import qualified Distribution.TestSuite as TS
-import qualified Distribution.TestSuite.HUnit as H
+import Test.Hspec
+import Distribution.TestSuite
 import Hand
 import Card
 
+{-
 --Test hasPair
 
 testHasPairNormal = TestCase $ assertEqual "Should get list of cards containing a pair" [Card Deuce Spades, Card Deuce Clubs, Card Ten Spades, Card Eight Diamonds, Card Three Clubs] (hasPair $ reverse $ sort [Card Deuce Spades, Card Deuce Clubs, Card Three Spades, Card Ten Diamonds, Card Eight Clubs])
@@ -18,7 +17,7 @@ testTwoPairNormal = TestCase $ assertEqual "Should get list of cards containing 
 
 testTwoPairWithOnePair = TestCase $ assertEqual "Should get empty list" [] (hasTwoPair $ reverse $ sort [Card Seven Spades, Card Seven Clubs, Card Queen Diamonds, Card Ace Hearts, Card King Diamonds])
 
-testTwoPairWithHighCards = TestCase $ assertEqual "Should get empty list" [] (hasTwoPair $ reverse $ sort [Card Ten Spades, Card Seven Clubs, Card Queen Diamonds, Card Ace Hearts, Card King Diamonds])
+testTwoPairWithHighCards = TestCase $ 
 
 --Test hasTrips
 
@@ -94,8 +93,6 @@ testHighCardsLTTwoPair = TestCase $ assertEqual "High cards are less than two pa
 testStraightGTWheel = TestCase $ assertEqual "6-high straight is greater than a wheel" True ((getBestHand $ reverse $ sort [Card Six Clubs, Card Five Spades, Card Four Diamonds, Card Three Clubs, Card Deuce Spades]) > (getBestHand $ reverse $ sort [Card Deuce Spades, Card Four Clubs, Card Five Diamonds, Card Three Hearts, Card Ace Spades]))
 
 testCases :: [(String, Test)]
-testCases = [("Test hasPair with high cards", testHasPairWithHighCards),
-            ("Test hasPair with normal input", testHasPairNormal),
             ("Test hasTwoPair with high cards", testTwoPairWithHighCards),
             ("Test hasTwoPair with one pair", testTwoPairWithOnePair),
             ("Test hasTwoPair with normal input", testTwoPairNormal),
@@ -128,7 +125,14 @@ testCases = [("Test hasPair with high cards", testHasPairWithHighCards),
             ("Test Hand Ord function with high cards and straight", testHighCardsLTTwoPair),
             ("Test Hand Ord function with two straights", testStraightGTWheel)
             ]
+-}
 
-tests :: IO [TS.Test]
-tests = return $ map (uncurry H.test) testCases
-
+main :: IO ()
+main = hspec $ do
+  describe "hasPair" $ do
+    it "with high cards should get empty list" $ do
+      (hasPair $ reverse $ sort [(Card Deuce Spades), (Card Four Clubs), (Card Three Spades)]) `shouldBe` []
+    it "hasPair with normal input" $ do
+       (hasPair $ reverse $ sort [Card Deuce Spades, Card Deuce Clubs, Card Three Spades, Card Ten Diamonds, Card Eight Clubs]) `shouldBe` [Card Deuce Spades, Card Deuce Clubs, Card Ten Spades, Card Eight Diamonds, Card Three Clubs]
+    it "hasTwoPair with high cards" $ do
+       (hasTwoPair $ reverse $ sort [Card Ten Spades, Card Seven Clubs, Card Queen Diamonds, Card Ace Hearts, Card King Diamonds]) `shouldBe` []

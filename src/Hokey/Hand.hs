@@ -1,7 +1,7 @@
-module Hand(hasPair, hasTwoPair, hasTrips, hasStraight, hasFlush, hasFullHouse, hasQuads, hasStraightFlush, getBestHand, Hand(..), HandType(..)) where
+module Hokey.Hand(hasPair, hasTwoPair, hasTrips, hasStraight, hasFlush, hasFullHouse, hasQuads, hasStraightFlush, getBestHand, Hand(..), HandType(..)) where
 
 import Data.List
-import Card
+import Hokey.Card
 
 data HandType = HighCard | OnePair | TwoPair | Trips | Straight | Flush | FullHouse | StraightFlush deriving (Ord, Eq)
 
@@ -18,26 +18,31 @@ instance Ord Hand where
         | otherwise = h1 `compare` h2
 
 getBestHand :: [Card] -> Maybe Hand
-getBestHand (v:w:x:y:z:zs)  = getBestHandInner sortedCards
-          where sortedCards = reverse $ sort (v:w:x:y:z:zs)
+getBestHand (v:w:x:y:z:zs)  = getBestHandInner (v:w:x:y:z:zs)
 getBestHand _               = Nothing
 
---This function assumes reversed, sorted input
 getBestHandInner :: [Card] -> Maybe Hand
 getBestHandInner (v:w:x:y:z:zs) = mapValue res handConstructors
         where res           = [sf, q, fh, f, s, t, tp, op]
-              sf            = hasStraightFlush sortedCards
-              q             = hasQuads sortedCards
-              fh            = hasFullHouse sortedCards
-              f             = hasFlush sortedCards
-              s             = hasStraight sortedCards
-              t             = hasTrips sortedCards
-              tp            = hasTwoPair sortedCards
-              op            = hasPair sortedCards
-              sortedCards   = reverse $ sort (v:w:x:y:z:zs)
-getBestHandInner [] = Nothing
+              sf            = hasStraightFlush (v:w:x:y:z:zs)
+              q             = hasQuads (v:w:x:y:z:zs)
+              fh            = hasFullHouse (v:w:x:y:z:zs)
+              f             = hasFlush (v:w:x:y:z:zs)
+              s             = hasStraight (v:w:x:y:z:zs)
+              t             = hasTrips (v:w:x:y:z:zs)
+              tp            = hasTwoPair (v:w:x:y:z:zs)
+              op            = hasPair (v:w:x:y:z:zs)
+getBestHandInner _ = Nothing
 
-handConstructors = [Hand StraightFlush, Hand FullHouse, Hand Flush, Hand Straight, Hand Trips, Hand TwoPair, Hand OnePair, Hand HighCard]
+handConstructors :: [[Card] -> Hand]
+handConstructors = map Hand [StraightFlush,
+                             FullHouse,
+                             Flush,
+                             Straight,
+                             Trips,
+                             TwoPair,
+                             OnePair,
+                             HighCard]
 
 mapValue :: (Ord a) => [[a]] -> [([a] -> b)] -> Maybe b
 mapValue (x:[]) (c:[])  = Just $ c x
@@ -46,12 +51,12 @@ mapValue (x:xs) (c:cs)
     | otherwise = mapValue xs cs
 mapValue _ _            = Nothing
 
---all hand functions below assume reversed, sorted input
 hasPair :: [Card] -> [Card]
 hasPair (v:w:x:y:z:zs)
-    | pair /= []    = pair ++ (take 3 $ filter (`notElem` pair) (v:w:x:y:z:zs))
+    | pair /= []    = pair ++ (take 3 $ filter (`notElem` pair) sortedCards)
     | otherwise     = []
         where pair = hasPairInner (v:w:x:y:z:zs)
+              sortedCards   = reverse $ sort (v:w:x:y:z:zs)
 hasPair _ = []
 
 hasPairInner :: [Card] -> [Card]
@@ -64,17 +69,19 @@ hasTwoPair :: [Card] -> [Card]
 hasTwoPair (v:w:x:y:z:zs)
     | firstPair /= [] && secondPair /= []   = firstPair ++ secondPair ++ kicker
     | otherwise                             = []
-        where firstPair  = hasPairInner (v:w:x:y:z:zs)
+        where firstPair  = hasPairInner sortedCards
               secondPair = hasPairInner $ remainder
-              remainder  = filter (`notElem` firstPair) (v:w:x:y:z:zs)
+              remainder  = filter (`notElem` firstPair) sortedCards
               kicker     = take 1 $ filter (`notElem` secondPair) remainder
+              sortedCards   = reverse $ sort (v:w:x:y:z:zs)
 hasTwoPair _ = []
 
 hasTrips :: [Card] -> [Card]
 hasTrips (v:w:x:y:z:zs)
     | trips /= []       = trips ++ kickers
-        where trips     = hasTripsInner (v:w:x:y:z:zs)
-              kickers   = take 2 $ filter (`notElem` trips) (v:w:x:y:z:zs)
+        where trips     = hasTripsInner sortedCards
+              kickers   = take 2 $ filter (`notElem` trips) sortedCards
+              sortedCards   = reverse $ sort (v:w:x:y:z:zs)
 hasTrips _ = []
 
 hasTripsInner :: [Card] -> [Card]
@@ -84,13 +91,14 @@ hasTripsInner (x:y:z:xs)
 hasTripsInner _             = []
 
 hasStraight :: [Card] -> [Card]
-hasStraight (x:xs) 
+hasStraight (x:xs)
 --if an ace exists then a wheel is possible, so append it to the end so we can
 --check for wheel straights.
-    | getRank x == Ace  = hasStraightInner (x:xs ++ ace)
-    | otherwise         = hasStraightInner (x:xs)
+    | getRank (head sortedCards) == Ace = hasStraightInner (sortedCards ++ ace)
+    | otherwise                         = hasStraightInner sortedCards
     --the suit of ace is irrelevant
     where ace = Card Ace (getSuit x):[]
+          sortedCards = reverse $ sort $ (x:xs)
 hasStraight _ = []
 
 hasStraightInner :: [Card] -> [Card]
@@ -108,30 +116,44 @@ hasStraightInner (v:w:x:y:z:zs)
 hasStraightInner _ = []
 
 hasFlush :: [Card] -> [Card]
-hasFlush (v:w:x:y:z:zs)
+hasFlush arg = hasFlushInner $ reverse $ sort $ arg
+
+hasFlushInner :: [Card] -> [Card]
+hasFlushInner (v:w:x:y:z:zs)
     | vx == wx && vx == xx && vx == yx && vx == zx  = (v:w:x:y:z:[])
-    | otherwise                             = hasFlush (w:x:y:z:zs)
+    | otherwise                                     = hasFlushInner (w:x:y:z:zs)
         where vx = getSuit v
               wx = getSuit w
               xx = getSuit x
               yx = getSuit y
               zx = getSuit z
-hasFlush _                                  = []
+hasFlushInner _ = []
 
 hasFullHouse :: [Card] -> [Card]
-hasFullHouse []    = []
+hasFullHouse [] = []
 hasFullHouse cards
     | pair /= [] && trips /= [] = trips ++ pair
     | otherwise                 = []
-        where pair  = hasPairInner cards
-              trips = hasTripsInner (filter (`notElem` pair) cards)
+        where pair  = hasPairInner (filter (`notElem` trips) cards)
+              trips = hasTripsInner cards
 
 hasQuads :: [Card] -> [Card]
-hasQuads (w:x:y:z:zs)
-    | w == x && w == y && w == z    = (w:x:y:z:[])
-    | otherwise                     = hasQuads (x:y:z:zs)
-hasQuads _                          = []
+hasQuads (v:w:x:y:z:zs)
+    | length res == 4 = res ++ [(head $ filter (`notElem` res) sortedCards)]
+    | otherwise = []
+    where sortedCards = reverse $ sort (v:w:x:y:z:zs)
+          res         = hasQuadsInner sortedCards
+hasQuads _ = []
+
+hasQuadsInner :: [Card] -> [Card]
+hasQuadsInner (v:w:x:y:zs)
+    | v == w && w == x && x == y = (v:w:x:y:[])
+    | otherwise                  = hasQuadsInner (w:x:y:zs)
+hasQuadsInner _ = []
 
 hasStraightFlush :: [Card] -> [Card]
-hasStraightFlush [] = []
-hasStraightFlush c  = take 5 $ concat $ map hasStraight (separateBySuit c) 
+hasStraightFlush (w:x:y:z:zs) = hasStraightFlushInner $ reverse $ sort $ (w:x:y:z:zs)
+hasStraightFlush _ = []
+
+hasStraightFlushInner :: [Card] -> [Card]
+hasStraightFlushInner c = take 5 $ concat $ map hasStraight (separateBySuit c)
