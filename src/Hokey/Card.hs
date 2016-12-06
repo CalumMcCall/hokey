@@ -3,7 +3,7 @@ module Hokey.Card (Card(..), Rank(..), Suit(..), getNextLowerRank, getSuit, getR
 import Data.List
 
 data Rank = Deuce | Three | Four | Five | Six | Seven | Eight | Nine | Ten | Jack | Queen | King | Ace deriving (Ord, Eq)
-data Suit = Diamonds | Clubs | Hearts | Spades deriving (Ord, Eq)
+data Suit = D | C | H | S deriving (Ord, Eq)
 data Card = Card Rank Suit 
 
 instance Show Rank where
@@ -22,10 +22,10 @@ instance Show Rank where
     show Ace = "A"
 
 instance Show Suit where
-    show Spades = "s"
-    show Diamonds = "d"
-    show Clubs = "c"
-    show Hearts = "h"
+    show S = "s"
+    show D = "d"
+    show C = "c"
+    show H = "h"
 
 instance Show Card where
     show (Card r s) = (show r) ++ (show s)
@@ -67,10 +67,10 @@ sortBySuit _      = []
 separateBySuit :: [Card] -> [[Card]]
 separateBySuit [] = []
 separateBySuit c = [spades, clubs, diamonds, hearts]
-    where spades    = getCardsOfSuit Spades c
-          clubs     = getCardsOfSuit Clubs c
-          diamonds  = getCardsOfSuit Diamonds c
-          hearts    = getCardsOfSuit Hearts c
+    where spades    = getCardsOfSuit S c
+          clubs     = getCardsOfSuit C c
+          diamonds  = getCardsOfSuit D c
+          hearts    = getCardsOfSuit H c
 
 getCardsOfSuit :: Suit -> [Card] -> [Card]
 getCardsOfSuit _ [] = []

@@ -1,6 +1,5 @@
 module HandSpec (main, spec) where
 
-import Data.List
 import Test.Hspec
 import Hokey.Hand
 import Hokey.Card
@@ -10,158 +9,162 @@ main = hspec spec
 
 spec :: Spec
 spec = do
-  let twoPairPairedBoard = [Card Ace Diamonds,
-                            Card Ace Hearts,
-                            Card Three Spades,
-                            Card Three Clubs,
-                            Card King Diamonds]
-      pair = [Card Deuce Spades,
-              Card Deuce Clubs,
-              Card Ten Spades,
-              Card Eight Diamonds,
-              Card Three Clubs]
-      trips = [Card Ten Spades,
-               Card Ten Clubs,
-               Card Ten Diamonds,
-               Card Ace Hearts,
-               Card King Diamonds]
-      sixHighStraight = [Card Six Spades,
-                         Card Five Spades,
-                         Card Four Clubs,
-                         Card Three Spades,
-                         Card Deuce Spades]
-      fiveHighStraight = [Card Five Clubs,
-                          Card Four Hearts,
-                          Card Three Spades,
-                          Card Deuce Spades,
-                          Card Ace Spades]
-      broadwayStraight = [Card Ace Spades,
-                          Card King Diamonds,
-                          Card Queen Spades,
-                          Card Jack Clubs,
-                          Card Ten Spades]
-      flush = [Card Queen Spades,
-               Card Jack Spades,
-               Card Ten Spades,
-               Card Nine Spades,
-               Card Three Spades]
-      fullHouse = [Card Nine Spades,
-                   Card Nine Diamonds,
-                   Card Nine Hearts,
-                   Card Ten Clubs,
-                   Card Ten Spades]
-      quads = [Card Ten Spades,
-               Card Ten Clubs,
-               Card Ten Diamonds,
-               Card Ten Hearts,
-               Card Ace Spades]
-      fourCardSF = [Card Ace Spades,
-                    Card Six Spades,
-                    Card Five Spades,
-                    Card Four Spades,
-                    Card Three Spades]
-      sixHighSF = [Card Six Spades,
-                   Card Five Spades,
-                   Card Four Spades,
-                   Card Three Spades,
-                   Card Deuce Spades]
-      steelWheel = [Card Five Spades,
-                    Card Four Spades,
-                    Card Three Spades,
-                    Card Deuce Spades,
-                    Card Ace Spades]
-      royalFlush = [Card Ace Spades,
-                    Card King Spades,
-                    Card Queen Spades,
-                    Card Jack Spades,
-                    Card Ten Spades]
+  let twoPairPairedBoard = [Card Ace D,
+                            Card Ace H,
+                            Card Three S,
+                            Card Three C,
+                            Card King D]
+      pair = [Card Deuce S,
+              Card Deuce C,
+              Card Ten S,
+              Card Eight D,
+              Card Three C]
+      trips = [Card Ten S,
+               Card Ten C,
+               Card Ten D,
+               Card Ace H,
+               Card King D]
+      sixHighStraight = [Card Six S,
+                         Card Five S,
+                         Card Four C,
+                         Card Three S,
+                         Card Deuce S]
+      fiveHighStraight = [Card Five C,
+                          Card Four H,
+                          Card Three S,
+                          Card Deuce S,
+                          Card Ace S]
+      broadwayStraight = [Card Ace S,
+                          Card King D,
+                          Card Queen S,
+                          Card Jack C,
+                          Card Ten S]
+      flush = [Card Queen S,
+               Card Jack S,
+               Card Ten S,
+               Card Nine S,
+               Card Three S]
+      fullHouse = [Card Nine S,
+                   Card Nine D,
+                   Card Nine H,
+                   Card Ten C,
+                   Card Ten S]
+      quadsAHigh = [Card Ten S,
+                    Card Ten C,
+                    Card Ten D,
+                    Card Ten H,
+                    Card Ace S]
+      quadsKHigh = [Card Ten S,
+                    Card Ten C,
+                    Card Ten D,
+                    Card Ten H,
+                    Card King S]
+      fourCardSF = [Card Ace S,
+                    Card Six S,
+                    Card Five S,
+                    Card Four S,
+                    Card Three S]
+      sixHighSF = [Card Six S,
+                   Card Five S,
+                   Card Four S,
+                   Card Three S,
+                   Card Deuce S]
+      steelWheel = [Card Five S,
+                    Card Four S,
+                    Card Three S,
+                    Card Deuce S,
+                    Card Ace S]
+      royalFlush = [Card Ace S,
+                    Card King S,
+                    Card Queen S,
+                    Card Jack S,
+                    Card Ten S]
 
   describe "hasPair" $ do
     it "returns nothing when passed high cards" $ do
-      (hasPair $ reverse $ sort [(Card Deuce Spades), (Card Four Clubs), (Card Three Spades)]) `shouldBe` []
+      hasPair [Card Deuce S, Card Four C, Card Three S] `shouldBe` []
     it "returns pair correctly" $ do
-      (hasPair pair) `shouldBe` pair
+      hasPair pair `shouldBe` pair
   describe "hasTwoPair" $ do
     it "returns nothing when passed high cards" $ do
-      (hasTwoPair [Card Ten Spades,
-                   Card Seven Clubs,
-                   Card Queen Diamonds,
-                   Card Ace Hearts,
-                   Card King Diamonds]) `shouldBe` []
+      hasTwoPair [Card Ten S,
+                   Card Seven C,
+                   Card Queen D,
+                   Card Ace H,
+                   Card King D] `shouldBe` []
     it "returns two pair correctly" $ do
-      (hasTwoPair twoPairPairedBoard) `shouldBe` twoPairPairedBoard
+      hasTwoPair twoPairPairedBoard `shouldBe` twoPairPairedBoard
     it "returns two pair on paired board" $ do
-      (hasTwoPair [Card Seven Spades,
-                   Card Seven Clubs,
-                   Card Queen Diamonds,
-                   Card Ace Hearts,
-                   Card King Diamonds]) `shouldBe` []
+      hasTwoPair [Card Seven S,
+                   Card Seven C,
+                   Card Queen D,
+                   Card Ace H,
+                   Card King D] `shouldBe` []
   describe "hasTrips" $ do
     it "returns high cards correctly" $ do
-      (hasTrips [Card Ten Spades, Card Seven Clubs, Card Queen Diamonds, Card Ace Hearts, Card King Diamonds]) `shouldBe` []
+      hasTrips [Card Ten S, Card Seven C, Card Queen D, Card Ace H, Card King D] `shouldBe` []
     it "returns pairs correctly" $ do
-      (hasTrips [Card Ten Spades, Card Ten Clubs, Card Queen Diamonds, Card Ace Hearts, Card King Diamonds]) `shouldBe` []
+      hasTrips [Card Ten S, Card Ten C, Card Queen D, Card Ace H, Card King D] `shouldBe` []
     it "returns trips correctly" $ do
-      (hasTrips trips) `shouldBe` trips
+      hasTrips trips `shouldBe` trips
   describe "hasStraight" $ do
     it "rejects pairs correctly" $ do
-      (hasStraight pair) `shouldBe` []
+      hasStraight pair `shouldBe` []
     it "rejects 4-card straights" $ do
-      (hasStraight [Card Six Spades, Card Five Spades, Card Four Spades, Card Three Spades, Card Ace Spades]) `shouldBe` []
+      hasStraight [Card Six S, Card Five S, Card Four S, Card Three S, Card Ace S] `shouldBe` []
     it "rejects 4-card broadway straights" $ do
-      (hasStraight [Card Ace Spades, Card King Diamonds, Card Queen Spades, Card Jack Spades, Card Nine Spades]) `shouldBe` []
+      hasStraight [Card Ace S, Card King D, Card Queen S, Card Jack S, Card Nine S] `shouldBe` []
     it "returns value 6-high straight" $ do
-      (hasStraight sixHighStraight) `shouldBe` sixHighStraight
+      hasStraight sixHighStraight `shouldBe` sixHighStraight
     it "returns 5-high straight" $ do
-      (hasStraight fiveHighStraight) `shouldBe` fiveHighStraight
+      hasStraight fiveHighStraight `shouldBe` fiveHighStraight
     it "returns a broadway straight" $ do
-      (hasStraight broadwayStraight) `shouldBe` broadwayStraight
+      hasStraight broadwayStraight `shouldBe` broadwayStraight
 
   describe "hasFlush" $ do
     it "returns high cards correctly" $ do
-      (hasFlush [Card Nine Spades, Card Queen Clubs, Card Three Diamonds, Card Jack Spades, Card Ten Spades]) `shouldBe` []
+      hasFlush [Card Nine S, Card Queen C, Card Three D, Card Jack S, Card Ten S] `shouldBe` []
     it "handles 4-card flush" $ do
-      (hasFlush [Card Nine Spades, Card Queen Clubs, Card Three Spades, Card Jack Spades, Card Ten Spades]) `shouldBe` []
+      hasFlush [Card Nine S, Card Queen C, Card Three S, Card Jack S, Card Ten S] `shouldBe` []
     it "handles normal flush" $ do
-     (hasFlush flush) `shouldBe` flush
+     hasFlush flush `shouldBe` flush
 
   describe "hasFullHouse" $ do
     it "handles pairs correctly" $ do
-      (hasFullHouse [Card Ace Hearts, Card King Diamonds, Card Queen Diamonds, Card Ten Spades, Card Ten Clubs]) `shouldBe` []
+      hasFullHouse [Card Ace H, Card King D, Card Queen D, Card Ten S, Card Ten C] `shouldBe` []
     it "handles trips correctly" $ do
-      (hasFullHouse trips) `shouldBe` []
+      hasFullHouse trips `shouldBe` []
     it "recognises full house correctly" $ do
-     (hasFullHouse fullHouse) `shouldBe` fullHouse
+      hasFullHouse fullHouse `shouldBe` fullHouse
 
   describe "hasQuads" $ do
     it "handles high cards correctly" $ do
-      (hasQuads [Card Ten Spades, Card Seven Clubs, Card Queen Diamonds, Card Ace Hearts, Card King Diamonds]) `shouldBe` []
+      hasQuads [Card Ten S, Card Seven C, Card Queen D, Card Ace H, Card King D] `shouldBe` []
     it "handles pairs correctly" $ do
-      (hasQuads pair) `shouldBe` []
+      hasQuads pair `shouldBe` []
     it "handles trips correctly" $ do
-      (hasQuads trips) `shouldBe` []
-    it "recognises quads" $ do
-       (hasQuads quads) `shouldBe` quads
+      hasQuads trips `shouldBe` []
+    it "recognises quadsAHigh" $ do
+      hasQuads quadsAHigh `shouldBe` quadsAHigh
 
   describe "hasStraightFlush" $ do
     it "handles pairs correctly" $ do
-      (hasStraightFlush $ reverse $ sort [Card Ten Spades, Card Ten Clubs, Card Queen Diamonds, Card Jack Spades, Card Three Clubs]) `shouldBe` []
+      hasStraightFlush [Card Ten S, Card Ten C, Card Queen D, Card Jack S, Card Three C] `shouldBe` []
     it "handles 4-card straights" $ do
-      (hasStraightFlush $ reverse $ sort fourCardSF) `shouldBe` []
+      hasStraightFlush fourCardSF `shouldBe` []
     it "handles 6-high straight flush" $ do
-       (hasStraightFlush $ reverse $ sort sixHighSF) `shouldBe` sixHighSF
+      hasStraightFlush sixHighSF `shouldBe` sixHighSF
     it "recognises steel wheel" $ do
-      (hasStraightFlush $ reverse $ sort steelWheel) `shouldBe` steelWheel
+      hasStraightFlush steelWheel `shouldBe` steelWheel
     it "recognises royal flushes" $ do
-      (hasStraightFlush $ reverse $ sort royalFlush) `shouldBe` royalFlush
+      hasStraightFlush royalFlush `shouldBe` royalFlush
 
   describe "getBestHand" $ do
     it "straight less than royal flush" $ do
-      ((getBestHand $ reverse $ sort [Card Six Clubs, Card Five Spades, Card Four Diamonds, Card Three Clubs, Card Deuce Spades]) < (getBestHand $ reverse $ sort [Card Ace Spades, Card King Spades, Card Queen Spades, Card Jack Spades, Card Ten Spades])) `shouldBe` True
+      getBestHand [Card Six C, Card Five S, Card Four D, Card Three C, Card Deuce S] < getBestHand [Card Ace S, Card King S, Card Queen S, Card Jack S, Card Ten S] `shouldBe` True
     it "high cards less than two pair" $ do
-      ((getBestHand $ reverse $ sort [Card Six Clubs, Card Ten Spades, Card Deuce Diamonds, Card King Clubs, Card Deuce Spades]) < (getBestHand $ reverse $ sort [Card Ace Spades, Card Ace Clubs, Card Eight Diamonds, Card Deuce Clubs, Card Eight Spades])) `shouldBe` True
+      getBestHand [Card Six C, Card Ten S, Card Deuce D, Card King C, Card Deuce S] < getBestHand [Card Ace S, Card Ace C, Card Eight D, Card Deuce C, Card Eight S] `shouldBe` True
     it "6-high straight greater than wheel" $ do
-      ((getBestHand $ reverse $ sort [Card Six Clubs, Card Five Spades, Card Four Diamonds, Card Three Clubs, Card Deuce Spades]) > (getBestHand $ reverse $ sort [Card Deuce Spades, Card Four Clubs, Card Five Diamonds, Card Three Hearts, Card Ace Spades])) `shouldBe` True
-
-
-
+      getBestHand [Card Six C, Card Five S, Card Four D, Card Three C, Card Deuce S] > getBestHand [Card Deuce S, Card Four C, Card Five D, Card Three H, Card Ace S] `shouldBe` True
+    it "high card counts with quads" $ do
+      getBestHand quadsAHigh > getBestHand quadsKHigh `shouldBe` True
