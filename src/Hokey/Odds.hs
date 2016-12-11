@@ -1,11 +1,11 @@
-module Hokey.Odds(HoleCards) where
+module Hokey.Odds (HoleCards) where
 
-import Hokey.Card
+import           Hokey.Card
 
 type HoleCards = (Card, Card)
 
---takes two player ranges and a board and returns the number of times
---player 1 wins and player 2 wins
+-- takes two player ranges and a board and returns the number of times player 1 wins and player 2
+-- wins
 getOdds :: [HoleCards] -> [HoleCards] -> [Card] -> (Integer, Integer)
 getOdds p1 p2 boardCards = (0, 0)
 
@@ -20,4 +20,3 @@ deck = (map (cons D) ranks) ++ (map (cons H) ranks) ++ (map (cons S) ranks) ++ (
 
 remainingCards :: [Card] -> [Card]
 remainingCards c = filter (`notElem` c) deck
-

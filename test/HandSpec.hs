@@ -1,93 +1,36 @@
 module HandSpec (main, spec) where
 
-import Test.Hspec
-import Hokey.Hand
-import Hokey.Card
+import           Hokey.Card
+import           Hokey.Hand
+import           Test.Hspec
 
 main :: IO ()
 main = hspec spec
 
---suits of cards don't matter so ignore them when
---checking results
+-- suits of cards don't matter so ignore them when checking results
 ranksEqual :: [Card] -> [Card] -> Bool
 ranksEqual (x:[]) (y:[]) = x `eqRank` y
 ranksEqual (x:xs) (y:ys)
-  | length (x:xs) /= length (y:ys) = False
+  | length (x : xs) /= length (y : ys) = False
   | otherwise = x `eqRank` y && ranksEqual xs ys
 ranksEqual _ _ = False
 
 spec :: Spec
 spec = do
-  let twoPairPairedBoard = [Card Ace D,
-                            Card Ace H,
-                            Card Three S,
-                            Card Three C,
-                            Card King D]
-      pair = [Card Deuce S,
-              Card Deuce C,
-              Card Ten S,
-              Card Eight D,
-              Card Three C]
-      trips = [Card Ten S,
-               Card Ten C,
-               Card Ten D,
-               Card Ace H,
-               Card King D]
-      sixHighStraight = [Card Six S,
-                         Card Five S,
-                         Card Four C,
-                         Card Three S,
-                         Card Deuce S]
-      fiveHighStraight = [Card Five C,
-                          Card Four H,
-                          Card Three S,
-                          Card Deuce S,
-                          Card Ace S]
-      broadwayStraight = [Card Ace S,
-                          Card King D,
-                          Card Queen S,
-                          Card Jack C,
-                          Card Ten S]
-      flush = [Card Queen S,
-               Card Jack S,
-               Card Ten S,
-               Card Nine S,
-               Card Three S]
-      fullHouse = [Card Nine S,
-                   Card Nine D,
-                   Card Nine H,
-                   Card Ten C,
-                   Card Ten S]
-      quadsAHigh = [Card Ten S,
-                    Card Ten C,
-                    Card Ten D,
-                    Card Ten H,
-                    Card Ace S]
-      quadsKHigh = [Card Ten S,
-                    Card Ten C,
-                    Card Ten D,
-                    Card Ten H,
-                    Card King S]
-      fourCardSF = [Card Ace S,
-                    Card Six S,
-                    Card Five S,
-                    Card Four S,
-                    Card Three S]
-      sixHighSF = [Card Six S,
-                   Card Five S,
-                   Card Four S,
-                   Card Three S,
-                   Card Deuce S]
-      steelWheel = [Card Five S,
-                    Card Four S,
-                    Card Three S,
-                    Card Deuce S,
-                    Card Ace S]
-      royalFlush = [Card Ace S,
-                    Card King S,
-                    Card Queen S,
-                    Card Jack S,
-                    Card Ten S]
+  let twoPairPairedBoard = [Card Ace D, Card Ace H, Card Three S, Card Three C, Card King D]
+      pair = [Card Deuce S, Card Deuce C, Card Ten S, Card Eight D, Card Three C]
+      trips = [Card Ten S, Card Ten C, Card Ten D, Card Ace H, Card King D]
+      sixHighStraight = [Card Six S, Card Five S, Card Four C, Card Three S, Card Deuce S]
+      fiveHighStraight = [Card Five C, Card Four H, Card Three S, Card Deuce S, Card Ace S]
+      broadwayStraight = [Card Ace S, Card King D, Card Queen S, Card Jack C, Card Ten S]
+      flush = [Card Queen S, Card Jack S, Card Ten S, Card Nine S, Card Three S]
+      fullHouse = [Card Nine S, Card Nine D, Card Nine H, Card Ten C, Card Ten S]
+      quadsAHigh = [Card Ten S, Card Ten C, Card Ten D, Card Ten H, Card Ace S]
+      quadsKHigh = [Card Ten S, Card Ten C, Card Ten D, Card Ten H, Card King S]
+      fourCardSF = [Card Ace S, Card Six S, Card Five S, Card Four S, Card Three S]
+      sixHighSF = [Card Six S, Card Five S, Card Four S, Card Three S, Card Deuce S]
+      steelWheel = [Card Five S, Card Four S, Card Three S, Card Deuce S, Card Ace S]
+      royalFlush = [Card Ace S, Card King S, Card Queen S, Card Jack S, Card Ten S]
 
   describe "hasPair" $ do
     it "returns nothing when passed high cards" $ do
@@ -96,19 +39,11 @@ spec = do
       hasPair pair `shouldSatisfy` ranksEqual pair
   describe "hasTwoPair" $ do
     it "returns nothing when passed high cards" $ do
-      hasTwoPair [Card Ten S,
-                   Card Seven C,
-                   Card Queen D,
-                   Card Ace H,
-                   Card King D] `shouldBe` []
+      hasTwoPair [Card Ten S, Card Seven C, Card Queen D, Card Ace H, Card King D] `shouldBe` []
     it "returns two pair correctly" $ do
       hasTwoPair twoPairPairedBoard `shouldSatisfy` ranksEqual twoPairPairedBoard
     it "returns two pair on paired board" $ do
-      hasTwoPair [Card Seven S,
-                   Card Seven C,
-                   Card Queen D,
-                   Card Ace H,
-                   Card King D] `shouldBe` []
+      hasTwoPair [Card Seven S, Card Seven C, Card Queen D, Card Ace H, Card King D] `shouldBe` []
   describe "hasTrips" $ do
     it "returns high cards correctly" $ do
       hasTrips [Card Ten S, Card Seven C, Card Queen D, Card Ace H, Card King D] `shouldBe` []
@@ -136,7 +71,7 @@ spec = do
     it "handles 4-card flush" $ do
       hasFlush [Card Nine S, Card Queen C, Card Three S, Card Jack S, Card Ten S] `shouldBe` []
     it "handles normal flush" $ do
-     hasFlush flush `shouldSatisfy` ranksEqual flush
+      hasFlush flush `shouldSatisfy` ranksEqual flush
 
   describe "hasFullHouse" $ do
     it "handles pairs correctly" $ do
@@ -170,10 +105,44 @@ spec = do
 
   describe "getBestHand" $ do
     it "straight less than royal flush" $ do
-      getBestHand [Card Six C, Card Five S, Card Four D, Card Three C, Card Deuce S] < getBestHand [Card Ace S, Card King S, Card Queen S, Card Jack S, Card Ten S] `shouldBe` True
+      getBestHand [Card Six C, Card Five S, Card Four D, Card Three C, Card Deuce S] < getBestHand
+                                                                                         [ Card Ace
+                                                                                             S
+                                                                                         , Card King
+                                                                                             S
+                                                                                         , Card
+                                                                                             Queen
+                                                                                             S
+                                                                                         , Card Jack
+                                                                                             S
+                                                                                         , Card Ten
+                                                                                             S
+                                                                                         ] `shouldBe` True
     it "high cards less than two pair" $ do
-      getBestHand [Card Six C, Card Ten S, Card Deuce D, Card King C, Card Deuce S] < getBestHand [Card Ace S, Card Ace C, Card Eight D, Card Deuce C, Card Eight S] `shouldBe` True
+      getBestHand [Card Six C, Card Ten S, Card Deuce D, Card King C, Card Deuce S] < getBestHand
+                                                                                        [ Card Ace S
+                                                                                        , Card Ace C
+                                                                                        , Card Eight
+                                                                                            D
+                                                                                        , Card Deuce
+                                                                                            C
+                                                                                        , Card Eight
+                                                                                            S
+                                                                                        ] `shouldBe` True
     it "6-high straight greater than wheel" $ do
-      getBestHand [Card Six C, Card Five S, Card Four D, Card Three C, Card Deuce S] > getBestHand [Card Deuce S, Card Four C, Card Five D, Card Three H, Card Ace S] `shouldBe` True
+      getBestHand [Card Six C, Card Five S, Card Four D, Card Three C, Card Deuce S] > getBestHand
+                                                                                         [ Card
+                                                                                             Deuce
+                                                                                             S
+                                                                                         , Card Four
+                                                                                             C
+                                                                                         , Card Five
+                                                                                             D
+                                                                                         , Card
+                                                                                             Three
+                                                                                             H
+                                                                                         , Card Ace
+                                                                                             S
+                                                                                         ] `shouldBe` True
     it "high card counts with quads" $ do
       getBestHand quadsAHigh > getBestHand quadsKHigh `shouldBe` True
