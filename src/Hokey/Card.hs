@@ -10,6 +10,7 @@ module Hokey.Card (
     separateBySuit,
     getCardsOfSuit,
     eqRank,
+    ranksEqual,
     ) where
 
 import           Data.List
@@ -69,6 +70,14 @@ instance Eq Card where
 
 eqRank :: Card -> Card -> Bool
 eqRank (Card r1 _) (Card r2 _) = r1 == r2
+
+-- suits of cards don't matter so ignore them when checking results
+ranksEqual :: [Card] -> [Card] -> Bool
+ranksEqual (x:[]) (y:[]) = x `eqRank` y
+ranksEqual (x:xs) (y:ys)
+  | length (x : xs) /= length (y : ys) = False
+  | otherwise = x `eqRank` y && ranksEqual xs ys
+ranksEqual _ _ = False
 
 getNextLowerRank :: Rank -> Rank
 getNextLowerRank Ace = King

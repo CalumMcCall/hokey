@@ -1,4 +1,4 @@
-module Hokey.Odds (HoleCards) where
+module Hokey.Odds (HoleCards, deck, remainingCards) where
 
 import           Hokey.Card
 
@@ -16,7 +16,7 @@ cons :: Suit -> Rank -> Card
 cons s r = Card r s
 
 deck :: [Card]
-deck = (map (cons D) ranks) ++ (map (cons H) ranks) ++ (map (cons S) ranks) ++ (map (cons C) ranks)
+deck = (map (cons S) ranks) ++ (map (cons H) ranks) ++ (map (cons D) ranks) ++ (map (cons C) ranks)
 
 remainingCards :: [Card] -> [Card]
 remainingCards c = filter (`notElem` c) deck

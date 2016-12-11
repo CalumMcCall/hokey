@@ -7,14 +7,6 @@ import           Test.Hspec
 main :: IO ()
 main = hspec spec
 
--- suits of cards don't matter so ignore them when checking results
-ranksEqual :: [Card] -> [Card] -> Bool
-ranksEqual (x:[]) (y:[]) = x `eqRank` y
-ranksEqual (x:xs) (y:ys)
-  | length (x : xs) /= length (y : ys) = False
-  | otherwise = x `eqRank` y && ranksEqual xs ys
-ranksEqual _ _ = False
-
 spec :: Spec
 spec = do
   let twoPairPairedBoard = [Card Ace D, Card Ace H, Card Three S, Card Three C, Card King D]
