@@ -7,6 +7,15 @@ import Hokey.Card
 main :: IO ()
 main = hspec spec
 
+--suits of cards don't matter so ignore them when
+--checking results
+ranksEqual :: [Card] -> [Card] -> Bool
+ranksEqual (x:[]) (y:[]) = x `eqRank` y
+ranksEqual (x:xs) (y:ys)
+  | length (x:xs) /= length (y:ys) = False
+  | otherwise = x `eqRank` y && ranksEqual xs ys
+ranksEqual _ _ = False
+
 spec :: Spec
 spec = do
   let twoPairPairedBoard = [Card Ace D,
@@ -84,7 +93,7 @@ spec = do
     it "returns nothing when passed high cards" $ do
       hasPair [Card Deuce S, Card Four C, Card Three S] `shouldBe` []
     it "returns pair correctly" $ do
-      hasPair pair `shouldBe` pair
+      hasPair pair `shouldSatisfy` ranksEqual pair
   describe "hasTwoPair" $ do
     it "returns nothing when passed high cards" $ do
       hasTwoPair [Card Ten S,
@@ -93,7 +102,7 @@ spec = do
                    Card Ace H,
                    Card King D] `shouldBe` []
     it "returns two pair correctly" $ do
-      hasTwoPair twoPairPairedBoard `shouldBe` twoPairPairedBoard
+      hasTwoPair twoPairPairedBoard `shouldSatisfy` ranksEqual twoPairPairedBoard
     it "returns two pair on paired board" $ do
       hasTwoPair [Card Seven S,
                    Card Seven C,
@@ -106,7 +115,7 @@ spec = do
     it "returns pairs correctly" $ do
       hasTrips [Card Ten S, Card Ten C, Card Queen D, Card Ace H, Card King D] `shouldBe` []
     it "returns trips correctly" $ do
-      hasTrips trips `shouldBe` trips
+      hasTrips trips `shouldSatisfy` ranksEqual trips
   describe "hasStraight" $ do
     it "rejects pairs correctly" $ do
       hasStraight pair `shouldBe` []
@@ -115,11 +124,11 @@ spec = do
     it "rejects 4-card broadway straights" $ do
       hasStraight [Card Ace S, Card King D, Card Queen S, Card Jack S, Card Nine S] `shouldBe` []
     it "returns value 6-high straight" $ do
-      hasStraight sixHighStraight `shouldBe` sixHighStraight
+      hasStraight sixHighStraight `shouldSatisfy` ranksEqual sixHighStraight
     it "returns 5-high straight" $ do
-      hasStraight fiveHighStraight `shouldBe` fiveHighStraight
+      hasStraight fiveHighStraight `shouldSatisfy` ranksEqual fiveHighStraight
     it "returns a broadway straight" $ do
-      hasStraight broadwayStraight `shouldBe` broadwayStraight
+      hasStraight broadwayStraight `shouldSatisfy` ranksEqual broadwayStraight
 
   describe "hasFlush" $ do
     it "returns high cards correctly" $ do
@@ -127,7 +136,7 @@ spec = do
     it "handles 4-card flush" $ do
       hasFlush [Card Nine S, Card Queen C, Card Three S, Card Jack S, Card Ten S] `shouldBe` []
     it "handles normal flush" $ do
-     hasFlush flush `shouldBe` flush
+     hasFlush flush `shouldSatisfy` ranksEqual flush
 
   describe "hasFullHouse" $ do
     it "handles pairs correctly" $ do
@@ -135,7 +144,7 @@ spec = do
     it "handles trips correctly" $ do
       hasFullHouse trips `shouldBe` []
     it "recognises full house correctly" $ do
-      hasFullHouse fullHouse `shouldBe` fullHouse
+      hasFullHouse fullHouse `shouldSatisfy` ranksEqual fullHouse
 
   describe "hasQuads" $ do
     it "handles high cards correctly" $ do
@@ -145,7 +154,7 @@ spec = do
     it "handles trips correctly" $ do
       hasQuads trips `shouldBe` []
     it "recognises quadsAHigh" $ do
-      hasQuads quadsAHigh `shouldBe` quadsAHigh
+      hasQuads quadsAHigh `shouldSatisfy` ranksEqual quadsAHigh
 
   describe "hasStraightFlush" $ do
     it "handles pairs correctly" $ do
@@ -153,11 +162,11 @@ spec = do
     it "handles 4-card straights" $ do
       hasStraightFlush fourCardSF `shouldBe` []
     it "handles 6-high straight flush" $ do
-      hasStraightFlush sixHighSF `shouldBe` sixHighSF
+      hasStraightFlush sixHighSF `shouldSatisfy` ranksEqual sixHighSF
     it "recognises steel wheel" $ do
-      hasStraightFlush steelWheel `shouldBe` steelWheel
+      hasStraightFlush steelWheel `shouldSatisfy` ranksEqual steelWheel
     it "recognises royal flushes" $ do
-      hasStraightFlush royalFlush `shouldBe` royalFlush
+      hasStraightFlush royalFlush `shouldSatisfy` ranksEqual royalFlush
 
   describe "getBestHand" $ do
     it "straight less than royal flush" $ do

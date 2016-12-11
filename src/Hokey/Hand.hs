@@ -55,14 +55,15 @@ hasPair :: [Card] -> [Card]
 hasPair (v:w:x:y:z:zs)
     | pair /= []    = pair ++ (take 3 $ filter (`notElem` pair) sortedCards)
     | otherwise     = []
-        where pair = hasPairInner (v:w:x:y:z:zs)
-              sortedCards   = reverse $ sort (v:w:x:y:z:zs)
+        where pair = hasPairInner sortedCards
+              sortedCards = reverse $ sort (v:w:x:y:z:zs)
 hasPair _ = []
 
+-- assumes sorted input
 hasPairInner :: [Card] -> [Card]
 hasPairInner (x:y:xs)
-    | x == y    = (x:y:[])
-    | otherwise = hasPairInner (y:xs)
+    | x `eqRank` y = (x:y:[])
+    | otherwise    = hasPairInner (y:xs)
 hasPairInner _       = []
 
 hasTwoPair :: [Card] -> [Card]
@@ -86,9 +87,9 @@ hasTrips _ = []
 
 hasTripsInner :: [Card] -> [Card]
 hasTripsInner (x:y:z:xs)
-    | x == y && x == z      = (x:y:z:[])
-    | otherwise             = hasTripsInner (y:z:xs)
-hasTripsInner _             = []
+    | x `eqRank` y && x `eqRank` z = (x:y:z:[])
+    | otherwise                    = hasTripsInner (y:z:xs)
+hasTripsInner _ = []
 
 hasStraight :: [Card] -> [Card]
 hasStraight (x:xs)
@@ -134,8 +135,9 @@ hasFullHouse [] = []
 hasFullHouse cards
     | pair /= [] && trips /= [] = trips ++ pair
     | otherwise                 = []
-        where pair  = hasPairInner (filter (`notElem` trips) cards)
-              trips = hasTripsInner cards
+        where pair  = hasPairInner (filter (`notElem` trips) sortedCards)
+              trips = hasTripsInner sortedCards
+              sortedCards = reverse $ sort $ cards
 
 hasQuads :: [Card] -> [Card]
 hasQuads (v:w:x:y:z:zs)
@@ -147,8 +149,8 @@ hasQuads _ = []
 
 hasQuadsInner :: [Card] -> [Card]
 hasQuadsInner (v:w:x:y:zs)
-    | v == w && w == x && x == y = (v:w:x:y:[])
-    | otherwise                  = hasQuadsInner (w:x:y:zs)
+    | v `eqRank` w && w `eqRank` x && x `eqRank` y = (v:w:x:y:[])
+    | otherwise                                    = hasQuadsInner (w:x:y:zs)
 hasQuadsInner _ = []
 
 hasStraightFlush :: [Card] -> [Card]

@@ -1,10 +1,10 @@
-module Hokey.Card (Card(..), Rank(..), Suit(..), getNextLowerRank, getSuit, getRank, compareSuits, sortBySuit, separateBySuit, getCardsOfSuit) where
+module Hokey.Card (Card(..), Rank(..), Suit(..), getNextLowerRank, getSuit, getRank, compareSuits, sortBySuit, separateBySuit, getCardsOfSuit, eqRank) where
 
 import Data.List
 
-data Rank = Deuce | Three | Four | Five | Six | Seven | Eight | Nine | Ten | Jack | Queen | King | Ace deriving (Ord, Eq)
-data Suit = D | C | H | S deriving (Ord, Eq)
-data Card = Card Rank Suit 
+data Rank = Deuce | Three | Four | Five | Six | Seven | Eight | Nine | Ten | Jack | Queen | King | Ace deriving (Ord, Eq, Enum)
+data Suit = C | D | H | S deriving (Ord, Eq, Enum)
+data Card = Card Rank Suit
 
 instance Show Rank where
     show Deuce = "2"
@@ -34,7 +34,10 @@ instance Ord Card where
     (Card r1 _) `compare` (Card r2 _) = r1 `compare` r2
 
 instance Eq Card where
-    (Card r1 _) == (Card r2 _) = r1 == r2
+    (Card r1 s1) == (Card r2 s2) = r1 == r2 && s1 == s2
+
+eqRank :: Card -> Card -> Bool
+eqRank (Card r1 _) (Card r2 _) = r1 == r2
 
 getNextLowerRank :: Rank -> Rank
 getNextLowerRank Ace   = King
