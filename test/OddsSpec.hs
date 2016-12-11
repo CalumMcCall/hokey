@@ -11,6 +11,10 @@ spec :: Spec
 spec = do
   describe "remainingCards" $ do
     it "removes correct card" $ do
-      remainingCards (Card Deuce S:[]) `shouldSatisfy` ranksEqual (tail deck)
+      remainingCards (Card Deuce S : []) `shouldSatisfy` ranksEqual (tail deck)
     it "removes correct cards" $ do
-      remainingCards (Card Deuce S:Card Ace C:[]) `shouldSatisfy` ranksEqual (tail $ filter (\x -> x /= Card Ace C) deck)
+      remainingCards (Card Deuce S : Card Ace C : []) `shouldSatisfy` ranksEqual
+                                                                        (tail $ filter
+                                                                                  (\x ->
+                                                                                     x /= Card Ace C)
+                                                                                  deck)
