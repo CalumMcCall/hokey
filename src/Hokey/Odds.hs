@@ -1,4 +1,4 @@
-module Hokey.Odds (HoleCards, deck, remainingCards, compareHandToRange) where
+module Hokey.Odds (HoleCards, deck, remainingCards, compareHandToRange, compareRangeToRange) where
 
 import           Hokey.Card
 import           Hokey.Hand
@@ -7,8 +7,16 @@ type HoleCards = (Card, Card)
 
 type HandResults = (Integer, Integer, Integer)
 
-compareHandToRange :: [Card] -> [Card] -> [[Card]] -> HandResults
-compareHandToRange hand board range = foldl (compareTwoHands hand board) (0, 0, 0) range
+compareRangeToRange :: [[Card]] -> [Card] -> [[Card]] -> HandResults
+compareRangeToRange range1 board range2 = foldl sumTuple (0,0,0) results
+  where
+    results = map (compareHandToRange range2 board) range1
+
+sumTuple :: HandResults -> HandResults -> HandResults
+sumTuple (r1,r2,r3) (r4,r5,r6) = (r1+r4,r2+r5,r3+r6)
+
+compareHandToRange :: [[Card]] -> [Card] -> [Card] -> HandResults
+compareHandToRange range board hand = foldl (compareTwoHands hand board) (0, 0, 0) range
 
 compareTwoHands :: [Card] -> [Card] -> HandResults -> [Card] -> HandResults
 compareTwoHands hand1 board (p1, d, p2) hand2 =

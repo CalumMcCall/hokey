@@ -7,6 +7,18 @@ import           Test.Hspec
 main :: IO ()
 main = hspec spec
 
+getPairs :: Rank -> [[Card]]
+getPairs r  = getCombinations cards
+  where
+    suits = [S,C,H,D]
+    cards = map (Card r) suits
+
+getCombinations :: [a] -> [[a]]
+getCombinations na = do
+    a <- na
+    b <- na
+    [[a,b]]
+
 spec :: Spec
 spec = do
   let redAces = [Card Ace H, Card Ace D]
@@ -15,6 +27,8 @@ spec = do
       blackKings = [Card King S, Card King C]
       blackQueens = [Card Queen S, Card Queen C]
       redJacks = [Card Jack S, Card Jack C]
+      kkqqjj = [blackKings, blackQueens, redJacks]
+      aaqq = getPairs Jack ++ getPairs Ace
   describe "remainingCards" $ do
     it "removes correct card" $ do
       remainingCards (Card Deuce S : []) `shouldSatisfy` ranksEqual (tail deck)
@@ -27,10 +41,16 @@ spec = do
 
   describe "compareHandToRange" $ do
     it "recognises draws" $ do
-      compareHandToRange redAces blankBoard [blackAces] `shouldBe` (0, 1, 0)
+      compareHandToRange [blackAces] blankBoard redAces `shouldBe` (0, 1, 0)
     it "recognises winning hands" $ do
-      compareHandToRange redAces blankBoard [redJacks] `shouldBe` (1, 0, 0)
+      compareHandToRange [redJacks] blankBoard redAces `shouldBe` (1, 0, 0)
     it "recognises losing hands" $ do
-      compareHandToRange redAces blankBoard [blackKings] `shouldBe` (0, 0, 1)
+      compareHandToRange [blackKings] blankBoard redAces `shouldBe` (0, 0, 1)
     it "recognises losing ranges" $ do
-      compareHandToRange redAces blankBoard [blackKings, blackQueens, redJacks] `shouldBe` (1, 0, 2)
+      compareHandToRange kkqqjj blankBoard redAces `shouldBe` (1, 0, 2)
+
+  describe "compareRangeToRange" $ do
+    it "returns overall draws correctly" $ do
+      compareRangeToRange kkqqjj blankBoard kkqqjj `shouldBe` (3,3,3)
+    it "return a 2:3 win ratio correctly" $ do
+      compareRangeToRange aaqq blankBoard kkqqjj `shouldBe` (3,3,3)
