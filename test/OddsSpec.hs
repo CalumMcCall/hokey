@@ -8,16 +8,10 @@ main :: IO ()
 main = hspec spec
 
 getPairs :: Rank -> [[Card]]
-getPairs r  = getCombinations cards
+getPairs r  = cards
   where
-    suits = [S,C,H,D]
-    cards = map (Card r) suits
-
-getCombinations :: [a] -> [[a]]
-getCombinations na = do
-    a <- na
-    b <- na
-    [[a,b]]
+    suits = [[S,C],[S,H],[S,D],[C,H],[C,D],[H,D]]
+    cards = map (\x -> map (Card r) x) suits
 
 spec :: Spec
 spec = do
@@ -28,7 +22,8 @@ spec = do
       blackQueens = [Card Queen S, Card Queen C]
       redJacks = [Card Jack S, Card Jack C]
       kkqqjj = [blackKings, blackQueens, redJacks]
-      aaqq = getPairs Jack ++ getPairs Ace
+      aaqq = getPairs Ace ++ getPairs Queen
+      aakk = getPairs Ace ++ getPairs King
   describe "remainingCards" $ do
     it "removes correct card" $ do
       remainingCards (Card Deuce S : []) `shouldSatisfy` ranksEqual (tail deck)
@@ -53,4 +48,4 @@ spec = do
     it "returns overall draws correctly" $ do
       compareRangeToRange kkqqjj blankBoard kkqqjj `shouldBe` (3,3,3)
     it "return a 2:3 win ratio correctly" $ do
-      compareRangeToRange aaqq blankBoard kkqqjj `shouldBe` (3,3,3)
+      compareRangeToRange aaqq blankBoard aakk `shouldBe` (3,3,3)
