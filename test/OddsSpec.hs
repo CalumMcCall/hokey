@@ -45,7 +45,11 @@ spec = do
       compareHandToRange kkqqjj blankBoard redAces `shouldBe` (1, 0, 2)
 
   describe "compareRangeToRange" $ do
-    it "returns overall draws correctly" $ do
-      compareRangeToRange kkqqjj blankBoard kkqqjj `shouldBe` (3,3,3)
+    it "returns draws correctly" $ do
+      compareRangeToRange kkqqjj blankBoard kkqqjj `shouldBe` (3,0,3)
+    it "return a win vs a single hand correctly" $ do
+      compareRangeToRange aaqq blankBoard (getPairs Queen) `shouldBe` (0,36,36)
     it "return a 2:3 win ratio correctly" $ do
-      compareRangeToRange aaqq blankBoard aakk `shouldBe` (3,3,3)
+      let results = compareRangeToRange aaqq blankBoard aakk
+      printEquity results
+      results `shouldBe` (36,6,72)
