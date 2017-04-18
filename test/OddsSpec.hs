@@ -44,11 +44,16 @@ spec = do
     it "recognises losing ranges" $ do
       compareHandToRange kkqqjj blankBoard redAces `shouldBe` (1, 0, 2)
 
+  describe "removeDeadCards" $ do
+    it "removes correct cards" $ do
+      removeDeadCards blankBoard aaqq `shouldBe` [[As,Ac],[As,Ah],[As,Ad],[Ac,Ah],[Ac,Ad],[Ah,Ad],[Qc,Qh],[Qc,Qd],[Qh,Qd]]
+
   describe "compareRangeToRange" $ do
     it "returns draws correctly" $ do
       compareRangeToRange kkqqjj blankBoard kkqqjj `shouldBe` (3,0,3)
     it "return a win vs a single hand correctly" $ do
-      compareRangeToRange aaqq blankBoard (getPairs Queen) `shouldBe` (0,36,36)
+      putStrLn $ show $ map (compareHandToRange (getPairs Queen) blankBoard) aaqq
+      compareRangeToRange aaqq blankBoard (getPairs Queen) `shouldBe` (0,6,36)
     it "return a 2:3 win ratio correctly" $ do
       let results = compareRangeToRange aaqq blankBoard aakk
       printEquity results

@@ -1,4 +1,4 @@
-module Hokey.Odds (HoleCards, deck, remainingCards, compareHandToRange, compareRangeToRange, printEquity) where
+module Hokey.Odds (HoleCards, deck, remainingCards, compareHandToRange, compareRangeToRange, printEquity, removeDeadCards) where
 
 import           Hokey.Card
 import           Hokey.Hand
@@ -15,7 +15,7 @@ printEquity :: HandResults -> IO ()
 printEquity (p1,d,p2) = do
           let totalHands = p1 + d + p2
           let getPer x = fromIntegral x / fromIntegral totalHands * percent
-          putStrLn $ "Player 1 win " ++ (show $ (getPer (p1+d)))
+          putStrLn $ "Player 1 win " ++ (show $ (getPer (p1)))
           putStrLn $ "Player 1 equity " ++ (show $ ((getPer (p1+d)) + (getPer d)))
           putStrLn $ "Player 2 win " ++ (show $ getPer (p2))
           putStrLn $ "Player 2 equity " ++ (show $ ((getPer (p2)) + (getPer d)))
@@ -24,15 +24,24 @@ printEquity (p1,d,p2) = do
 compareRangeToRange :: [[Card]] -> [Card] -> [[Card]] -> HandResults
 compareRangeToRange range1 board range2 = foldl sumTuple (0,0,0) results
   where
-    results = map (compareHandToRange range2 board) range1
+    results = map (compareHandToRange adj2 board) adj1
+    adj1    = removeDeadCards board range1
+    adj2    = removeDeadCards board range2
 
 sumTuple :: HandResults -> HandResults -> HandResults
 sumTuple (r1,r2,r3) (r4,r5,r6) = (r1+r4,r2+r5,r3+r6)
 
 compareHandToRange :: [[Card]] -> [Card] -> [Card] -> HandResults
-compareHandToRange range board hand = foldl (compareTwoHands hand board) (0, 0, 0) fRange
-  where
-    fRange = filter (\x -> (head hand) `notElem` x && (hand !! 1) `notElem` x) range
+compareHandToRange range board hand = foldl (compareTwoHands hand board) (0, 0, 0) (removeDeadCards hand range)
+
+notInHand :: Card -> [Card] -> Bool
+notInHand checkCard hand = not $ ((head hand == checkCard) || (hand !! 1 == checkCard))
+
+notInRange :: [Card] -> [Card] -> Bool
+notInRange deadCards hand = foldl (\condition h -> condition && (notInHand h hand)) True deadCards
+
+removeDeadCards :: [Card] -> [[Card]] -> [[Card]]
+removeDeadCards deadCards range = filter (notInRange deadCards) range
 
 compareTwoHands :: [Card] -> [Card] -> HandResults -> [Card] -> HandResults
 compareTwoHands hand1 board (p1, d, p2) hand2 =
