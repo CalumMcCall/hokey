@@ -13,6 +13,9 @@ getPairs r  = cards
     suits = [[S,C],[S,H],[S,D],[C,H],[C,D],[H,D]]
     cards = map (\x -> map (Card r) x) suits
 
+--       E       W
+--MP2  41.18%  35.29%  5.88% AA, QQ
+--MP3  58.82%  52.94%  5.88% KK+
 spec :: Spec
 spec = do
   let redAces = [Card Ace H, Card Ace D]
@@ -46,7 +49,7 @@ spec = do
 
   describe "removeDeadCards" $ do
     it "removes correct cards" $ do
-      removeDeadCards blankBoard aaqq `shouldBe` [[As,Ac],[As,Ah],[As,Ad],[Ac,Ah],[Ac,Ad],[Ah,Ad],[Qc,Qh],[Qc,Qd],[Qh,Qd]]
+      length (removeDeadCards blankBoard aaqq) `shouldBe` 9
 
   describe "compareRangeToRange" $ do
     it "returns draws correctly" $ do
@@ -56,5 +59,8 @@ spec = do
       compareRangeToRange aaqq blankBoard (getPairs Queen) `shouldBe` (0,6,36)
     it "return a 2:3 win ratio correctly" $ do
       let results = compareRangeToRange aaqq blankBoard aakk
+      let equity = getEquity2 results
       printEquity results
-      results `shouldBe` (36,6,72)
+      results `shouldBe` (18,6,27)
+      equity `shouldBe` ((35.29, 41.18, 5.88),(52.94,58.82,5.88))
+

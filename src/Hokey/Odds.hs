@@ -1,4 +1,4 @@
-module Hokey.Odds (HoleCards, deck, remainingCards, compareHandToRange, compareRangeToRange, printEquity, removeDeadCards) where
+module Hokey.Odds (HoleCards, deck, remainingCards, compareHandToRange, compareRangeToRange, printEquity, removeDeadCards, getEquity2) where
 
 import           Hokey.Card
 import           Hokey.Hand
@@ -7,19 +7,32 @@ type HoleCards = (Card, Card)
 
 --(Player 1 wins, Draw, Player 2 wins)
 type HandResults = (Integer, Integer, Integer)
+type PlayerEquity = (Double, Double, Double)
+type Equity2 = (PlayerEquity, PlayerEquity)
 
-percent :: Double
-percent = 100
+
+getEquity2 :: HandResults -> Equity2
+getEquity2 (p1,d,p2) = ((roundTo2 p1Win, roundTo2 p1Equity, roundTo2 tieEquity), (roundTo2 p2Win, roundTo2 p2Equity, roundTo2 tieEquity))
+  where
+    totalHands = p1 + d + p2
+    roundTo2 f = (fromIntegral (round $ f * (10^2))) / (10.0^^2)
+    getPer x = fromIntegral x / fromIntegral totalHands * (100 :: Double)
+    p1Win = getPer p1
+    p1Equity = getPer (p1+d) + tieEquity
+    p2Win = getPer p2
+    p2Equity = getPer p2 + tieEquity
+    tieEquity = (getPer d) / 2
+
 
 printEquity :: HandResults -> IO ()
 printEquity (p1,d,p2) = do
           let totalHands = p1 + d + p2
-          let getPer x = fromIntegral x / fromIntegral totalHands * percent
+          let getPer x = fromIntegral x / fromIntegral totalHands * (100 :: Double)
           putStrLn $ "Player 1 win " ++ (show $ (getPer (p1)))
-          putStrLn $ "Player 1 equity " ++ (show $ ((getPer (p1+d)) + (getPer d)))
+          putStrLn $ "Player 1 equity " ++ (show $ ((getPer (p1)) + (getPer d)))
           putStrLn $ "Player 2 win " ++ (show $ getPer (p2))
           putStrLn $ "Player 2 equity " ++ (show $ ((getPer (p2)) + (getPer d)))
-          putStrLn $ "Tie equity " ++ (show $ getPer d)
+          putStrLn $ "Tie equity " ++ (show $ (getPer d) / 2)
 
 compareRangeToRange :: [[Card]] -> [Card] -> [[Card]] -> HandResults
 compareRangeToRange range1 board range2 = foldl sumTuple (0,0,0) results
