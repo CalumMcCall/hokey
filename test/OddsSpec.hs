@@ -13,18 +13,14 @@ getPairs r  = cards
     suits = [[S,C],[S,H],[S,D],[C,H],[C,D],[H,D]]
     cards = map (\x -> map (Card r) x) suits
 
---       E       W
---MP2  41.18%  35.29%  5.88% AA, QQ
---MP3  58.82%  52.94%  5.88% KK+
 spec :: Spec
 spec = do
   let redAces = [Card Ace H, Card Ace D]
       blackAces = [Card Ace S, Card Ace C]
       blankBoard = [Card King H, Card Five C, Card Queen S, Card Deuce C, Card Nine C]
       blackKings = [Card King S, Card King C]
-      blackQueens = [Card Queen S, Card Queen C]
       redJacks = [Card Jack S, Card Jack C]
-      kkqqjj = [blackKings, blackQueens, redJacks]
+      kkqqjj = getPairs King ++ getPairs Queen ++ getPairs Jack
       aaqq = getPairs Ace ++ getPairs Queen
       aakk = getPairs Ace ++ getPairs King
   describe "remainingCards" $ do
@@ -45,7 +41,7 @@ spec = do
     it "recognises losing hands" $ do
       compareHandToRange [blackKings] blankBoard redAces `shouldBe` (0, 0, 1)
     it "recognises losing ranges" $ do
-      compareHandToRange kkqqjj blankBoard redAces `shouldBe` (1, 0, 2)
+      compareHandToRange kkqqjj blankBoard redAces `shouldBe` (6, 0, 12)
 
   describe "removeDeadCards" $ do
     it "removes correct cards" $ do
@@ -53,14 +49,12 @@ spec = do
 
   describe "compareRangeToRange" $ do
     it "returns draws correctly" $ do
-      compareRangeToRange kkqqjj blankBoard kkqqjj `shouldBe` (3,0,3)
+      compareRangeToRange kkqqjj blankBoard kkqqjj `shouldBe` (45,6,45)
     it "return a win vs a single hand correctly" $ do
-      putStrLn $ show $ map (compareHandToRange (getPairs Queen) blankBoard) aaqq
-      compareRangeToRange aaqq blankBoard (getPairs Queen) `shouldBe` (0,6,36)
+      compareRangeToRange aaqq blankBoard (getPairs Queen) `shouldBe` (0,0,18)
     it "return a 2:3 win ratio correctly" $ do
       let results = compareRangeToRange aaqq blankBoard aakk
       let equity = getEquity2 results
-      printEquity results
       results `shouldBe` (18,6,27)
       equity `shouldBe` ((35.29, 41.18, 5.88),(52.94,58.82,5.88))
 
