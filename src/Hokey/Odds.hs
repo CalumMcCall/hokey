@@ -18,7 +18,7 @@ getEquity2 (p1,d,p2) = ((roundTo2 p1Win, roundTo2 p1Equity, roundTo2 tieEquity),
     roundTo2 f = (fromIntegral (round $ f * (10^2))) / (10.0^^2)
     getPer x = fromIntegral x / fromIntegral totalHands * (100 :: Double)
     p1Win = getPer p1
-    p1Equity = getPer (p1+d) + tieEquity
+    p1Equity = getPer p1 + tieEquity
     p2Win = getPer p2
     p2Equity = getPer p2 + tieEquity
     tieEquity = (getPer d) / 2
@@ -28,11 +28,12 @@ printEquity :: HandResults -> IO ()
 printEquity (p1,d,p2) = do
           let totalHands = p1 + d + p2
           let getPer x = fromIntegral x / fromIntegral totalHands * (100 :: Double)
+          let drawEquity = getPer d / 2
           putStrLn $ "Player 1 win " ++ (show $ (getPer (p1)))
-          putStrLn $ "Player 1 equity " ++ (show $ ((getPer (p1)) + (getPer d)))
+          putStrLn $ "Player 1 equity " ++ (show $ ((getPer (p1)) + drawEquity))
           putStrLn $ "Player 2 win " ++ (show $ getPer (p2))
-          putStrLn $ "Player 2 equity " ++ (show $ ((getPer (p2)) + (getPer d)))
-          putStrLn $ "Tie equity " ++ (show $ (getPer d) / 2)
+          putStrLn $ "Player 2 equity " ++ (show $ ((getPer (p2)) + drawEquity))
+          putStrLn $ "Tie equity " ++ (show $ drawEquity)
 
 compareRangeToRange :: [[Card]] -> [Card] -> [[Card]] -> HandResults
 compareRangeToRange range1 board range2 = foldl sumTuple (0,0,0) results
